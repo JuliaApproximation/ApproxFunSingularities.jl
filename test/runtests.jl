@@ -1,5 +1,5 @@
 using ApproxFunSingularities, ApproxFunOrthogonalPolynomials, ApproxFunBase, InfiniteArrays, BlockArrays, IntervalSets, SpecialFunctions, LinearAlgebra, Random, Test
-    import ApproxFunBase: HeavisideSpace, PointSpace, ArraySpace, DiracSpace, PiecewiseSegment, testbandedoperator, UnionDomain, testtransforms, testfunctional
+    import ApproxFunBase: HeavisideSpace, PointSpace, ArraySpace, DiracSpace, PiecewiseSegment, testbandedoperator, UnionDomain, testtransforms, testfunctional, testbandedblockbandedoperator
 
 
 @testset "Sqrt" begin
