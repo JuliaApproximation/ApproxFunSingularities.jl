@@ -1,5 +1,6 @@
-using ApproxFunSingularities, ApproxFunOrthogonalPolynomials, ApproxFunBase, InfiniteArrays, BlockArrays, IntervalSets, SpecialFunctions, LinearAlgebra, Random, Test
-    import ApproxFunBase: HeavisideSpace, PointSpace, ArraySpace, DiracSpace, PiecewiseSegment, testbandedoperator, UnionDomain, testtransforms, testfunctional, testbandedblockbandedoperator
+using ApproxFunSingularities, ApproxFunOrthogonalPolynomials, ApproxFunBase, InfiniteArrays, BlockArrays, BlockBandedMatrices, IntervalSets, SpecialFunctions, LinearAlgebra, Random, Test
+import ApproxFunBase: HeavisideSpace, PointSpace, ArraySpace, DiracSpace, PiecewiseSegment, testbandedoperator, UnionDomain, testtransforms, testfunctional, testbandedblockbandedoperator,
+                        resizedata!, CachedOperator, RaggedMatrix
 
 @testset "Sqrt" begin
     x=Fun(identity);
