@@ -47,7 +47,7 @@ import ApproxFunOrthogonalPolynomials: order
 
 import DomainSets: Domain, indomain, UnionDomain, ProductDomain, FullSpace, Point, elements, DifferenceDomain,
             Interval, ChebyshevInterval, boundary, ∂, rightendpoint, leftendpoint,
-            dimension, Domain1d, Domain2d   
+            dimension
             
 import BandedMatrices: bandrange, bandshift,
                 inbands_getindex, inbands_setindex!, bandwidth, AbstractBandedMatrix,
