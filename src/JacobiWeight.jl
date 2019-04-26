@@ -100,7 +100,7 @@ coefficients(f::AbstractVector,S2::SubSpace{S,IT,DD,RR},
 #TODO: it could be possible that we want to JacobiWeight a SumSpace....
 coefficients(f::AbstractVector,sp::JacobiWeight{SJ,DD},S2::SumSpace{SV,DD,RR}) where {SJ,SV,DD<:IntervalOrSegment,RR<:Real} =
     sumspacecoefficients(f,sp,S2)
-coefficients(f::AbstractVector,sp::JacobiWeight{SJ,Segment{Vec{2,TT}}},S2::TensorSpace{SV,TTT,DD}) where {SJ,TT,SV,TTT,DD<:Domain2d} =
+coefficients(f::AbstractVector,sp::JacobiWeight{SJ,Segment{Vec{2,TT}}},S2::TensorSpace{SV,TTT,DD}) where {SJ,TT,SV,TTT,DD<:EuclideanDomain{2}} =
     coefficients(f,sp,JacobiWeight(0,0,S2))
 
 coefficients(f::AbstractVector,sp::JacobiWeight{SJ,DD},S2::Space{DD,RR}) where {SJ,DD<:IntervalOrSegment,RR<:Real} =
