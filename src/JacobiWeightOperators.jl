@@ -292,34 +292,6 @@ conversion_rule(A::JacobiWeight,B::Space{D}) where {D<:IntervalOrSegmentDomain} 
 
 
 # override defaultConversion instead of Conversion to avoid ambiguity errors
-function defaultConversion(A::JacobiWeight{<:Any,<:IntervalOrSegmentDomain},B::JacobiWeight{<:Any,<:IntervalOrSegmentDomain})
-    @assert isapproxinteger(A.β-B.β) && isapproxinteger(A.α-B.α)
-
-    if isapprox(A.β,B.β) && isapprox(A.α,B.α)
-        ConversionWrapper(SpaceOperator(Conversion(A.space,B.space),A,B))
-    else
-        @assert A.β≥B.β&&A.α≥B.α
-        # first check if a multiplication by JacobiWeight times B.space is overloaded
-        # this is currently designed for Jacobi multiplied by (1-x), etc.
-        βdif,αdif=round(Int,A.β-B.β),round(Int,A.α-B.α)
-        d=domain(A)
-        M=Multiplication(jacobiweight(βdif,αdif,d),
-                         A.space)
-
-        if rangespace(M)==JacobiWeight(βdif,αdif,A.space)
-            # M is the default, so we should use multiplication by polynomials instead
-            x=Fun(identity,d)
-            y=mobius(d,x)   # we use mobius instead of tocanonical so that it works for Funs
-            m=(1+y)^βdif*(1-y)^αdif
-            MC=promoterangespace(Multiplication(m,A.space),B.space)
-
-            ConversionWrapper(SpaceOperator(MC,A,B))# Wrap the operator with the correct spaces
-        else
-            ConversionWrapper(SpaceOperator(promoterangespace(M,B.space),
-                                            A,B))
-        end
-    end
-end
 
 defaultConversion(A::Space{<:IntervalOrSegmentDomain,<:Real},B::JacobiWeight{<:Any,<:IntervalOrSegmentDomain}) =
     ConversionWrapper(SpaceOperator(
