@@ -305,7 +305,7 @@ defaultConversion(A::JacobiWeight{<:Any,<:IntervalOrSegmentDomain},B::Space{<:In
 function defaultConversion(A::JacobiWeight{<:Any,<:IntervalOrSegmentDomain},B::JacobiWeight{<:Any,<:IntervalOrSegmentDomain})
     if isapprox(A.β,B.β) && isapprox(A.α,B.α)
         ConversionWrapper(SpaceOperator(Conversion(A.space,B.space),A,B))
-    elseif isapprox(A.β-B.β, A.space.B-B.space.B) && isapprox(A.α-B.α, A.space.a-B.space.a)
+    elseif isapprox(A.β-B.β, A.space.b-B.space.b) && isapprox(A.α-B.α, A.space.a-B.space.a)
         Multiplication(jacobiweight(A.β-B.β,A.α-B.α,domain(A)),A.space)
     else
         C=JacobiWeight(A.β,A.α,Jacobi(B.space.b+A.β-B.β,B.space.a+A.α-B.α))
