@@ -128,6 +128,8 @@ end
         C=Conversion(S1,S2)
         Cf=C*f
         @test Cf(0.1) ≈ f(0.1)
+    
+        @test Conversion(JacobiWeight(2,0,Jacobi(2,-2)),Legendre()) == Conversion(JacobiWeight(2,0,Jacobi(2,-2)),JacobiWeight(2,0,Jacobi(2,0)),Legendre())
     end
 
     @testset "Array Conversion" begin
