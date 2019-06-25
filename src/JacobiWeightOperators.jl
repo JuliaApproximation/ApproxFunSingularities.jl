@@ -309,7 +309,7 @@ function defaultConversion(A::JacobiWeight{<:Any,<:IntervalOrSegmentDomain},B::J
         ConversionWrapper(SpaceOperator(Multiplication(jacobiweight(A.β-B.β,A.α-B.α,domain(A)),A.space),A,B))
     else
         C=JacobiWeight(A.β,A.α,Jacobi(B.space.b+A.β-B.β,B.space.a+A.α-B.α))
-        ConversionWrapper(Conversion(A,C)*Conversion(C,B))
+        ConversionWrapper(Conversion(C,B)*Conversion(A,C))
     end
 end
 
