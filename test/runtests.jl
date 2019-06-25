@@ -129,7 +129,8 @@ end
         Cf=C*f
         @test Cf(0.1) ≈ f(0.1)
     
-        @test Conversion(JacobiWeight(2,0,Jacobi(2,-2)),Legendre()) == Conversion(JacobiWeight(2,0,Jacobi(2,-2)),JacobiWeight(2,0,Jacobi(2,0)),Legendre())
+        C=Conversion(JacobiWeight(2,0,Jacobi(2,-2)),Legendre())
+        @test Matrix(C[1:2,1:2]) = [4/3 -2;2 -2.4]
     end
 
     @testset "Array Conversion" begin
