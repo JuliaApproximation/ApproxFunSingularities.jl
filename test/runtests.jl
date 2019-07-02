@@ -147,7 +147,7 @@ end
 
         f = Fun(a, rand(10))
         @test f(0.1) ≈ (C*f)(0.1)
-    end
+    end 
 
     @testset "Equivalent spaces" begin
         @test norm(Fun(cos,Chebyshev)-Fun(cos,Jacobi(-0.5,-0.5)))<100eps()
