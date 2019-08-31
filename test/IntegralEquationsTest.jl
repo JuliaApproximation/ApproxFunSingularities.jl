@@ -1,4 +1,4 @@
-using ApproxFunSingularities, ApproxFunOrthogonalPolynomials, ApproxFunBase, IntervalSets, Random, LinearAlgebra, Test
+using ApproxFunSingularities, ApproxFunOrthogonalPolynomials, ApproxFunBase, IntervalSets, LinearAlgebra, Test
     import ApproxFunBase: testfunctional, testbandedbelowoperator, testbandedoperator
 
 

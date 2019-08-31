@@ -1,6 +1,6 @@
 module ApproxFunSingularities
-using Base, LinearAlgebra, Reexport, BandedMatrices, BlockBandedMatrices, AbstractFFTs, FFTW, InfiniteArrays, BlockArrays, FillArrays, FastTransforms, IntervalSets, 
-            DomainSets, Statistics, SpecialFunctions, FastGaussQuadrature
+using Base, LinearAlgebra, Reexport, IntervalSets, 
+            DomainSets, Statistics, SpecialFunctions
             
 @reexport using ApproxFunBase
 @reexport using ApproxFunOrthogonalPolynomials
@@ -41,18 +41,14 @@ import ApproxFunBase: normalize!, flipsign, FiniteRange, Fun, MatrixFun, UnsetSp
                     chebmult_getindex, intpow, alternatingsum,
                     domaintype, diagindshift, rangetype, weight, isapproxinteger, default_Dirichlet, scal!, dotu,
                     components, promoterangespace, promotedomainspace,
-                    block, blockstart, blockstop, blocklengths, isblockbanded, pointscompatible, affine_setdiff, complexroots
+                    block, blockstart, blockstop, blocklengths, isblockbanded, pointscompatible, affine_setdiff, complexroots,
+                    ∞
 
 import ApproxFunOrthogonalPolynomials: order
 
 import DomainSets: Domain, indomain, UnionDomain, ProductDomain, FullSpace, Point, elements, DifferenceDomain,
             Interval, ChebyshevInterval, boundary, ∂, rightendpoint, leftendpoint,
-            dimension
-            
-import BandedMatrices: bandrange, bandshift,
-                inbands_getindex, inbands_setindex!, bandwidth, AbstractBandedMatrix,
-                colstart, colstop, colrange, rowstart, rowstop, rowrange,
-                bandwidths, _BandedMatrix, BandedMatrix            
+            dimension        
 
 import Base: values, convert, getindex, setindex!, *, +, -, ==, <, <=, >, |, !, !=, eltype, iterate,
                 >=, /, ^, \, ∪, transpose, size, tail, broadcast, broadcast!, copyto!, copy, to_index, (:),
@@ -70,14 +66,6 @@ import LinearAlgebra: BlasInt, BlasFloat, norm, ldiv!, mul!, det, eigvals, dot, 
                 qr, qr!, rank, isdiag, istril, istriu, issymmetric, ishermitian,
                 Tridiagonal, diagm, diagm_container, factorize, nullspace,
                 Hermitian, Symmetric, adjoint, transpose, char_uplo                
-
-import InfiniteArrays: Infinity, InfRanges, AbstractInfUnitRange, OneToInf                    
-
-import FastTransforms: ChebyshevTransformPlan, IChebyshevTransformPlan, plan_chebyshevtransform,
-                        plan_chebyshevtransform!, plan_ichebyshevtransform, plan_ichebyshevtransform!,
-                        pochhammer
-
-import BlockBandedMatrices: blockbandwidths, subblockbandwidths
 
 # we need to import all special functions to use Calculus.symbolic_derivatives_1arg
 # we can't do importall Base as we replace some Base definitions
