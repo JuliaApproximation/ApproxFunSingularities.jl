@@ -1,6 +1,5 @@
 module ApproxFunSingularities
-using Base, LinearAlgebra, Reexport, IntervalSets, 
-            DomainSets, Statistics, SpecialFunctions
+using Base, LinearAlgebra, Reexport, IntervalSets, DomainSets, Statistics
             
 @reexport using ApproxFunBase
 @reexport using ApproxFunOrthogonalPolynomials
@@ -42,7 +41,7 @@ import ApproxFunBase: normalize!, flipsign, FiniteRange, Fun, MatrixFun, UnsetSp
                     domaintype, diagindshift, rangetype, weight, isapproxinteger, default_Dirichlet, scal!, dotu,
                     components, promoterangespace, promotedomainspace,
                     block, blockstart, blockstop, blocklengths, isblockbanded, pointscompatible, affine_setdiff, complexroots,
-                    ∞
+                    ∞, gamma
 
 import ApproxFunOrthogonalPolynomials: order
 
@@ -60,7 +59,7 @@ import Base: values, convert, getindex, setindex!, *, +, -, ==, <, <=, >, |, !, 
                 getproperty, findfirst, unsafe_getindex, fld, cld, div, real, imag,
                 @_inline_meta, eachindex, firstindex, lastindex, keys, isreal, OneTo,
                 Array, Vector, Matrix, view, ones, @propagate_inbounds, print_array,
-                split
+                split, exp, log
 
 import LinearAlgebra: BlasInt, BlasFloat, norm, ldiv!, mul!, det, eigvals, dot, cross,
                 qr, qr!, rank, isdiag, istril, istriu, issymmetric, ishermitian,
