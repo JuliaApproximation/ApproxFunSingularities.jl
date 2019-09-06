@@ -137,7 +137,8 @@ function /(c::Number,f::Fun{Chebyshev{DD,RR}}) where {DD<:IntervalOrSegment,RR}
     end
 end
 
-function ^(f::Fun{<:PolynomialSpace}, k::Real)
+
+function ^(@nospecialize(f::Fun{<:PolynomialSpace}), k::Real)
     T = cfstype(f)
     RT = real(T)
     # Need to think what to do if this is ever not the case..
@@ -149,7 +150,7 @@ function ^(f::Fun{<:PolynomialSpace}, k::Real)
     #TODO divideatroots
     @assert length(r) <= 2
 
-    if length(r) == 0
+    ret = if length(r) == 0
         setdomain(Fun((x->x^k) ∘ fc,csp),domain(f))  # using ∘ supports fast transforms for fc
     elseif length(r) == 1
         @assert isapprox(abs(r[1]),1)
@@ -165,7 +166,9 @@ function ^(f::Fun{<:PolynomialSpace}, k::Real)
 
         Fun(JacobiWeight(k,k,sp),coefficients(divide_singularity(fc)^k,csp))
     end
+    ret
 end
+
 
 
 # function log{MS<:MappedSpace}(f::Fun{MS})
