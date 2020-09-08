@@ -77,7 +77,7 @@ include("ExpWeight.jl")
 /(c::Number,f::Fun{<:PolynomialSpace{<:IntervalOrSegment}}) = c/Fun(f,Chebyshev(domain(f)))
 /(c::Number,f::Fun{<:Chebyshev}) = setdomain(c/setcanonicaldomain(f),domain(f))
 
-scaleshiftdomain(f::Fun,sc,sh) = setdomain(f,sc*domain(f)+sh)
+scaleshiftdomain(f::Fun,sc,sh) = setdomain(f,sc .* domain(f) .+ sh)
 
 function /(c::Number,f::Fun{Chebyshev{DD,RR}}) where {DD<:IntervalOrSegment,RR}
     fc = setcanonicaldomain(f)
