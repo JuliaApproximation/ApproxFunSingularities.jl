@@ -128,6 +128,9 @@ end
         C=Conversion(S1,S2)
         Cf=C*f
         @test Cf(0.1) ≈ f(0.1)
+    
+        C=Conversion(JacobiWeight(2,0,Jacobi(2,-2)),Legendre())
+        @test C[1,1]==4/3 && C[1,2]==-2 && C[2,1]==2 && C[2,2]==-2.4
     end
 
     @testset "Array Conversion" begin
@@ -144,7 +147,7 @@ end
 
         f = Fun(a, rand(10))
         @test f(0.1) ≈ (C*f)(0.1)
-    end
+    end 
 
     @testset "Equivalent spaces" begin
         @test norm(Fun(cos,Chebyshev)-Fun(cos,Jacobi(-0.5,-0.5)))<100eps()
