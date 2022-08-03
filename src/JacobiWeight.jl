@@ -64,7 +64,7 @@ transformtimes(f::Fun{JW},g::Fun) where {JW<:JacobiWeight} =
 transformtimes(f::Fun,g::Fun{JW}) where {JW<:JacobiWeight} =
     Fun(g.space,coefficients(transformtimes(Fun(g.space.space,g.coefficients),f)))
 
-jacobiweight(β,α,x) = -1 ≤ x ≤ 1 ? (1+x)^β*(1-x)^α : zero(x)
+jacobiweight(β,α,x) = -1 ≤ x ≤ 1 ? (1+x)^β*(1-x)^α : zero(x)
 jacobiweight(β,α,d::Domain) = Fun(JacobiWeight(β,α,ConstantSpace(d)),[1.])
 jacobiweight(β,α) = jacobiweight(β,α,ChebyshevInterval())
 
@@ -367,7 +367,7 @@ for (Func,Len,Sum) in ((:DefiniteIntegral,:complexlength,:sum),(:DefiniteLineInt
             dsp = domainspace(Σ)
 
             if dsp.β == dsp.space.b && dsp.α == dsp.space.a
-                # TODO: copy and paste
+                # TODO: copy and paste
                 k == 1 ? convert(T,$Sum(Fun(dsp,[one(T)]))) : zero(T)
             else
                 convert(T,$Sum(Fun(dsp,[zeros(T,k-1);1])))

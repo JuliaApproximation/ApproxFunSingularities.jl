@@ -75,7 +75,7 @@ end
         M = Multiplication(x, JacobiWeight(0,0,Chebyshev()))
         @test exp(M).f == Multiplication(exp(x), Chebyshev()).f
     end
-    
+
     @testset "Derivative" begin
         S = JacobiWeight(-1.,-1.,Chebyshev(0..1))
 
@@ -455,7 +455,7 @@ end
         @test cumsum(f)' ≈ f
         @test cumsum(f)(1.0) ≈ 0.7869386805747332
     end
-    
+
     @testset "Definite integral" begin
         for S in (WeightedJacobi(0,0), JacobiWeight(0,0, Legendre(1.1..2.3)), Legendre())
             B = DefiniteIntegral(S)
@@ -465,7 +465,7 @@ end
             f = Fun(exp, S)
             B*f == sum(Fun(exp,domain(S)))
         end
-    end    
+    end
 end
 
 @testset "WeightedLaguerre" begin
@@ -476,7 +476,7 @@ end
         g = integrate(f)
         g(3.0) - cumsum(Fun(x -> f(x), 0..6))(3.0)
     end
-    
+
     @testset "Log with squareroot singularities" begin
         a = 1.0; b = 2.0+im
         d = Segment(a,b)
