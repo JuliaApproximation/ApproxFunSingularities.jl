@@ -76,7 +76,7 @@ using ApproxFunSingularities, ApproxFunOrthogonalPolynomials, ApproxFunBase, Int
 
         @test norm(u-usol) ≤ 200eps()
     end
-    
+
     @testset "arcs" begin
         d = exp(im*Segment(0.1,0.2))
         x = Fun(d)
