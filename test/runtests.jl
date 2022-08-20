@@ -777,3 +777,42 @@ end
         @time \(QR1,f; tolerance=1E-10)
     println("Laplace Dirichlet: should be ~0.015, 0.015, 0.001")
 end
+
+@testset "show" begin
+    @testset "logweight" begin
+        w = LogWeight(1.0, 0.0, Chebyshev())
+        s = repr(w)
+        @test startswith(s, "log")
+        @test contains(s, "Chebyshev")
+        @test contains(s, "(1+x)^1")
+        @test contains(s, "(1-x)^0")
+
+        w = LogWeight(1.0, 1.0, Chebyshev())
+        s = repr(w)
+        @test startswith(s, "log")
+        @test contains(s, "Chebyshev")
+        @test contains(s, "(1-x^2)^1")
+    end
+    @testset "JacobiWeight" begin
+        w = JacobiWeight(1.0, 0.0, Chebyshev())
+        s = repr(w)
+        @test contains(s, "Chebyshev")
+        @test contains(s, "(1+x)^1")
+
+        w = JacobiWeight(0.0, 1.0, Chebyshev())
+        s = repr(w)
+        @test contains(s, "Chebyshev")
+        @test contains(s, "(1-x)^1")
+
+        w = JacobiWeight(1.0, 1.0, Chebyshev())
+        s = repr(w)
+        @test contains(s, "Chebyshev")
+        @test contains(s, "(1-x^2)^1")
+
+        w = JacobiWeight(1.0, 2.0, Chebyshev())
+        s = repr(w)
+        @test contains(s, "Chebyshev")
+        @test contains(s, "(1+x)^1")
+        @test contains(s, "(1-x)^2")
+    end
+end

@@ -95,3 +95,16 @@ function Multiplication(f::Fun{<:LogWeight},S::Space)
     rsp=LogWeight(space(f).β,space(f).α,rangespace(M))
     MultiplicationWrapper(f,SpaceOperator(M,S,rsp))
 end
+
+function show(io::IO,s::LogWeight)
+    d=domain(s)
+    #TODO: Get shift and weights right
+    if s.α==s.β
+        print(io,"log((1-x^2)^", s.α, ")[")
+    else
+        print(io,"log((1+x)^", s.β, "(1-x)^", s.α, ")[")
+    end
+
+    show(io,s.space)
+    print(io,"]")
+end
