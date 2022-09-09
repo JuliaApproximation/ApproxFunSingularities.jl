@@ -9,6 +9,11 @@ using IntervalSets
 using SpecialFunctions
 using Test
 
+using Aqua
+@testset "Project quality" begin
+    Aqua.test_all(ApproxFunSingularities, ambiguities=false, undefined_exports=false)
+end
+
 @testset "Sqrt" begin
     x=Fun(identity);
     @time @test sqrt(cos(π/2*x))(.1) ≈ sqrt(cos(.1π/2))
