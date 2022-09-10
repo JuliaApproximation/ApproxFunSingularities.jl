@@ -11,7 +11,7 @@ using Test
 
 using Aqua
 @testset "Project quality" begin
-    Aqua.test_all(ApproxFunSingularities, ambiguities=false, undefined_exports=false)
+    Aqua.test_all(ApproxFunSingularities, ambiguities=false)
 end
 
 @testset "Sqrt" begin
