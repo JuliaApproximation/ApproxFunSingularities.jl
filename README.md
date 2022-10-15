@@ -6,6 +6,8 @@ Support for spaces with singularities in ApproxFun
 [![Build Status](https://travis-ci.org/JuliaApproximation/ApproxFunSingularities.jl.svg?branch=master)](https://travis-ci.org/JuliaApproximation/ApproxFunSingularities.jl) 
 [![Build status](https://ci.appveyor.com/api/projects/status/jrxte0hp9dwvfyt2?svg=true)](https://ci.appveyor.com/project/dlfivefifty/approxfunsingularities-jl)
 [![codecov](https://codecov.io/gh/JuliaApproximation/ApproxFunSingularities.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/JuliaApproximation/ApproxFunSingularities.jl)
+[![deps](https://juliahub.com/docs/ApproxFunSingularities/deps.svg)](https://juliahub.com/ui/Packages/ApproxFunSingularities/43LpP?t=2)
+[![version](https://juliahub.com/docs/ApproxFunSingularities/version.svg)](https://juliahub.com/ui/Packages/ApproxFunSingularities/43LpP)
 [![Join the chat at https://gitter.im/JuliaApproximation/ApproxFun.jl](https://badges.gitter.im/JuliaApproximation/ApproxFun.jl.svg)](https://gitter.im/JuliaApproximation/ApproxFun.jl?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
