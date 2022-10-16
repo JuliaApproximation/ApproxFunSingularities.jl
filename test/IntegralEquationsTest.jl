@@ -1,5 +1,12 @@
-using ApproxFunSingularities, ApproxFunOrthogonalPolynomials, ApproxFunBase, IntervalSets, LinearAlgebra, Test
-    import ApproxFunBase: testfunctional, testbandedbelowoperator, testbandedoperator
+module IntegralEquationsTest
+
+using ApproxFunSingularities
+using ApproxFunOrthogonalPolynomials
+using ApproxFunBase
+using IntervalSets
+using LinearAlgebra
+using Test
+using ApproxFunBaseTest: testfunctional, testbandedbelowoperator, testbandedoperator
 
 
 @testset "Integral equations" begin
@@ -133,3 +140,5 @@ using ApproxFunSingularities, ApproxFunOrthogonalPolynomials, ApproxFunBase, Int
         @test sum(f) ≈ Number(⨍*f)
     end
 end
+
+end # module

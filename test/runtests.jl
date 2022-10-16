@@ -1,7 +1,9 @@
 using ApproxFunBase
 import ApproxFunBase: HeavisideSpace, PointSpace, ArraySpace, DiracSpace, PiecewiseSegment,
-                        testbandedoperator, UnionDomain, testtransforms, testfunctional, testbandedblockbandedoperator,
-                        resizedata!, CachedOperator, RaggedMatrix, Block, ∞, BandedBlockBandedMatrix
+                        UnionDomain, resizedata!, CachedOperator, RaggedMatrix,
+                        Block, ∞, BandedBlockBandedMatrix
+using ApproxFunBaseTest: testbandedoperator, testtransforms, testfunctional,
+                        testbandedblockbandedoperator
 using ApproxFunOrthogonalPolynomials
 using ApproxFunSingularities
 using LinearAlgebra
