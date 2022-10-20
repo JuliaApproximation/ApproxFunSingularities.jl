@@ -1,5 +1,5 @@
 using ApproxFunBase
-import ApproxFunBase: HeavisideSpace, PointSpace, ArraySpace, DiracSpace, PiecewiseSegment,
+using ApproxFunBase: HeavisideSpace, PointSpace, ArraySpace, DiracSpace, PiecewiseSegment,
                         UnionDomain, resizedata!, CachedOperator, RaggedMatrix,
                         Block, ∞, BandedBlockBandedMatrix
 using ApproxFunBaseTest: testbandedoperator, testtransforms, testfunctional,
