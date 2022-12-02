@@ -5,6 +5,7 @@ using ApproxFunBase: HeavisideSpace, PointSpace, ArraySpace, DiracSpace, Piecewi
 using ApproxFunBaseTest: testbandedoperator, testtransforms, testfunctional,
                         testbandedblockbandedoperator
 using ApproxFunOrthogonalPolynomials
+using ApproxFunOrthogonalPolynomials: order
 using ApproxFunSingularities
 using LinearAlgebra
 using IntervalSets
@@ -166,6 +167,12 @@ end
         @test norm(Fun(cos,Jacobi(-0.5,-0.5))-Fun(cos,JacobiWeight(0,0))) < 100eps()
         @test norm(Fun(cos,Chebyshev)-Fun(cos,JacobiWeight(0,0,Jacobi(-0.5,-0.5))))<100eps()
         @test norm(Fun(cos,Jacobi(-0.5,-0.5))-Fun(cos,JacobiWeight(0,0,Jacobi(-0.5,-0.5))))<100eps()
+    end
+
+    @testset "Ultraspherical order" begin
+        us = Ultraspherical(0.5)
+        s = JacobiWeight(1, 1, us)
+        @test order(s) == order(us)
     end
 end
 
