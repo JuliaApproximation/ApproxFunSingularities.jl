@@ -45,7 +45,7 @@ WeightedJacobi(β,α) = JacobiWeight(β,α,Jacobi(β,α))
 Fun(::typeof(identity), S::JacobiWeight) =
     isapproxinteger(S.β) && isapproxinteger(S.α) ? Fun(x->x,S) : Fun(identity,domain(S))
 
-order(S::JacobiWeight{Ultraspherical{Int,D,R},D,R}) where {D,R} = order(S.space)
+order(S::JacobiWeight{<:Ultraspherical{<:Any,D,R},D,R}) where {D,R} = order(S.space)
 
 
 spacescompatible(A::JacobiWeight,B::JacobiWeight) =
