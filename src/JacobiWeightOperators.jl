@@ -187,7 +187,7 @@ end
 Derivative(S::JacobiWeight{SS,DDD}) where {SS,DDD<:IntervalOrSegment} = jacobiweightDerivative(S)
 
 function Derivative(S::JacobiWeight{SS,DD}, k::Number) where {SS,DD<:IntervalOrSegment}
-    @assert Integer(k) == k "order must be an integer"
+    assert_integer(k)
     if k==1
         Derivative(S)
     else
