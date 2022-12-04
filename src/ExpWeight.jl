@@ -33,7 +33,8 @@ function Derivative(wsp::ExpWeight)
     DerivativeWrapper(SpaceOperator(D,wsp,ExpWeight(q,rangespace(D))),1)
 end
 
-function Derivative(S::ExpWeight,k::Integer)
+function Derivative(S::ExpWeight,k::Number)
+    assert_integer(k)
     if k==1
         Derivative(S)
     else
