@@ -51,19 +51,19 @@ function differentiate(f::Fun{<:JacobiWeight{<:Any,<:IntervalOrSegment}})
     ff=Fun(S.space,f.coefficients)
     if S.β==S.α==0
         u=differentiate(ff)
-        Fun(JacobiWeight(0.,0.,space(u)),u.coefficients)
+        Fun(JacobiWeight(0,0,space(u)),u.coefficients)
     elseif S.β==0
         x=Fun(identity,d)
         M=tocanonical(d,x)
         Mp=tocanonicalD(d,leftendpoint(d))
         u=-Mp*S.α*ff +(1-M).*differentiate(ff)
-        Fun(JacobiWeight(0.,S.α-1,space(u)),u.coefficients)
+        Fun(JacobiWeight(0,S.α-1,space(u)),u.coefficients)
     elseif S.α==0
         x=Fun(identity,d)
         M=tocanonical(d,x)
         Mp=tocanonicalD(d,leftendpoint(d))
         u=Mp*S.β*ff +(1+M).*differentiate(ff)
-        Fun(JacobiWeight(S.β-1,0.,space(u)),u.coefficients)
+        Fun(JacobiWeight(S.β-1,0,space(u)),u.coefficients)
     else
         x=Fun(identity,d)
         M=tocanonical(d,x)
@@ -73,7 +73,7 @@ function differentiate(f::Fun{<:JacobiWeight{<:Any,<:IntervalOrSegment}})
     end
 end
 
-function integrate(f::Fun{JacobiWeight{SS,DD,RR,TT}}) where {SS,DD<:IntervalOrSegment,RR,TT<:Real}
+function integrate(f::Fun{<:JacobiWeight{<:Any,<:IntervalOrSegment,<:Any,TT}}) where {TT<:Real}
     S=space(f)
     # we integrate by solving u'=f
     tol=1e-10
@@ -94,7 +94,7 @@ function integrate(f::Fun{JacobiWeight{SS,DD,RR,TT}}) where {SS,DD<:IntervalOrSe
         integrate(fp) ⊕ Fun(LogWeight(1.,0.,S.space),[p/Mp])
     elseif S.β ≈ -1 && S.α > 0 && isapproxinteger(S.α)
         # convert to zero case and integrate
-        integrate(Fun(f,JacobiWeight(S.β,0.,S.space)))
+        integrate(Fun(f,JacobiWeight(S.β,0,S.space)))
     elseif S.α ≈ -1 && S.β ≈ 0
         p=last(g)  # last value without weight
         fp = Fun(f-Fun(S,[p]),S.space)  # Subtract out right value and divide singularity via conversion
@@ -389,7 +389,7 @@ for (Func,Len,Sum) in ((:DefiniteIntegral,:complexlength,:sum),(:DefiniteLineInt
 
         getindex(Σ::$ConcFunc, k::Integer) = eltype(Σ)($Sum(Fun(domainspace(Σ),[zeros(eltype(Σ),k-1);1])))
 
-        function getindex(Σ::$ConcFunc{<:JacobiWeight{<:Ultraspherical{<:Any,D,R},D,R,<:Any},T},
+        function getindex(Σ::$ConcFunc{<:JacobiWeight{<:Ultraspherical{<:Any,D,R},D,R},T},
                 k::Integer) where {D<:IntervalOrSegment,R,T<:Real}
             λ = order(domainspace(Σ).space)
             dsp = domainspace(Σ)
@@ -427,7 +427,7 @@ for (Func,Len,Sum) in ((:DefiniteIntegral,:complexlength,:sum),(:DefiniteLineInt
             end
         end
 
-        function getindex(Σ::$ConcFunc{<:JacobiWeight{Chebyshev{D,R},D,R,<:Any},T},
+        function getindex(Σ::$ConcFunc{<:JacobiWeight{Chebyshev{D,R},D,R},T},
                 k::Integer) where {D<:IntervalOrSegment,R,T<:Real}
             dsp = domainspace(Σ)
             d = domain(Σ)

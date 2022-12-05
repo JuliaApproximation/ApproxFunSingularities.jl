@@ -1,3 +1,5 @@
+module AFSTests
+
 using ApproxFunBase
 using ApproxFunBase: HeavisideSpace, PointSpace, ArraySpace, DiracSpace, PiecewiseSegment,
                         UnionDomain, resizedata!, CachedOperator, RaggedMatrix,
@@ -830,3 +832,5 @@ end
         @test contains(s, "(1-x)^2")
     end
 end
+
+end # module
