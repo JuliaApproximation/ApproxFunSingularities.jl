@@ -1,6 +1,3 @@
-
-
-
 export JacobiWeight, WeightedJacobi
 
 
@@ -72,8 +69,8 @@ weight(sp::JacobiWeight,x) = jacobiweight(sp.β,sp.α,real(tocanonical(sp,x)))
 dimension(sp::JacobiWeight) = dimension(sp.space)
 
 
-Base.first(f::Fun{JW}) where {JW<:JacobiWeight} = space(f).β>0 ? zero(cfstype(f)) : f(leftendpoint(domain(f)))
-Base.last(f::Fun{JW}) where {JW<:JacobiWeight} = space(f).α>0 ? zero(cfstype(f)) : f(rightendpoint(domain(f)))
+Base.first(f::Fun{<:JacobiWeight}) = space(f).β>0 ? zero(cfstype(f)) : f(leftendpoint(domain(f)))
+Base.last(f::Fun{<:JacobiWeight}) = space(f).α>0 ? zero(cfstype(f)) : f(rightendpoint(domain(f)))
 
 setdomain(sp::JacobiWeight,d::Domain)=JacobiWeight(sp.β,sp.α,setdomain(sp.space,d))
 
@@ -81,7 +78,9 @@ setdomain(sp::JacobiWeight,d::Domain)=JacobiWeight(sp.β,sp.α,setdomain(sp.spac
 
 
 ##TODO: paradigm for same space
-function coefficients(f::AbstractVector,sp1::JacobiWeight{SJ1,DD},sp2::JacobiWeight{SJ2,DD}) where {SJ1,SJ2,DD<:IntervalOrSegment}
+function coefficients(f::AbstractVector,
+        sp1::JacobiWeight{<:Any,DD},sp2::JacobiWeight{<:Any,DD}) where {DD<:IntervalOrSegment}
+
     β,α=sp1.β,sp1.α
     c,d=sp2.β,sp2.α
 
@@ -93,21 +92,29 @@ function coefficients(f::AbstractVector,sp1::JacobiWeight{SJ1,DD},sp2::JacobiWei
         defaultcoefficients(f,sp1,sp2)
     end
 end
-coefficients(f::AbstractVector,sp::JacobiWeight{SJ,DD},
-             S2::SubSpace{S,IT,DD,RR}) where {SJ,S,IT,DD<:IntervalOrSegment,RR<:Real} = subspace_coefficients(f,sp,S2)
-coefficients(f::AbstractVector,S2::SubSpace{S,IT,DD,RR},
-             sp::JacobiWeight{SJ,DD}) where {SJ,S,IT,DD<:IntervalOrSegment,RR<:Real} = subspace_coefficients(f,S2,sp)
+function coefficients(f::AbstractVector,sp::JacobiWeight{<:Any,DD},
+             S2::SubSpace{<:Any,<:Any,DD,<:Real}) where {DD<:IntervalOrSegment}
+    subspace_coefficients(f,sp,S2)
+end
+function coefficients(f::AbstractVector,S2::SubSpace{<:Any,<:Any,DD,<:Real},
+             sp::JacobiWeight{<:Any,DD}) where {DD<:IntervalOrSegment}
+    subspace_coefficients(f,S2,sp)
+end
 #TODO: it could be possible that we want to JacobiWeight a SumSpace....
-coefficients(f::AbstractVector,sp::JacobiWeight{SJ,DD},S2::SumSpace{SV,DD,RR}) where {SJ,SV,DD<:IntervalOrSegment,RR<:Real} =
+function coefficients(f::AbstractVector,
+        sp::JacobiWeight{<:Any,DD},S2::SumSpace{<:Any,DD,<:Real}) where {DD<:IntervalOrSegment}
     sumspacecoefficients(f,sp,S2)
-coefficients(f::AbstractVector,sp::JacobiWeight{SJ,Segment{Vec{2,TT}}},S2::TensorSpace{SV,TTT,DD}) where {SJ,TT,SV,TTT,DD<:EuclideanDomain{2}} =
+end
+function coefficients(f::AbstractVector,
+        sp::JacobiWeight{<:Any,<:Segment{<:SVector{2}}}, S2::TensorSpace{<:Any,<:Any,<:EuclideanDomain{2}})
     coefficients(f,sp,JacobiWeight(0,0,S2))
+end
 
-coefficients(f::AbstractVector,sp::JacobiWeight{SJ,DD},S2::Space{DD,RR}) where {SJ,DD<:IntervalOrSegment,RR<:Real} =
+coefficients(f::AbstractVector,sp::JacobiWeight{<:Any,DD},S2::Space{DD,<:Real}) where {DD<:IntervalOrSegment} =
     coefficients(f,sp,JacobiWeight(0,0,S2))
-coefficients(f::AbstractVector,sp::ConstantSpace{DD},ts::JacobiWeight{SJ,DD}) where {SJ,DD<:IntervalOrSegment} =
+coefficients(f::AbstractVector,sp::ConstantSpace{DD},ts::JacobiWeight{<:Any,DD}) where {DD<:IntervalOrSegment} =
     f.coefficients[1]*ones(ts).coefficients
-coefficients(f::AbstractVector,S2::Space{DD,RR},sp::JacobiWeight{SJ,DD}) where {SJ,DD<:IntervalOrSegment,RR<:Real} =
+coefficients(f::AbstractVector,S2::Space{DD,<:Real},sp::JacobiWeight{<:Any,DD}) where {DD<:IntervalOrSegment} =
     coefficients(f,JacobiWeight(0,0,S2),sp)
 
 
@@ -118,8 +125,13 @@ coefficients(f::AbstractVector,S2::Space{DD,RR},sp::JacobiWeight{SJ,DD}) where {
 On other domains this is accomplished by mapping to the unit interval.
 """
 increase_jacobi_parameter(f) = Fun(f,JacobiWeight(f.space.β+1,f.space.α+1,space(f).space))
-increase_jacobi_parameter(s,f) = s==-1 ? Fun(f,JacobiWeight(f.space.β+1,f.space.α,space(f).space)) :
-                                       Fun(f,JacobiWeight(f.space.β,f.space.α+1,space(f).space))
+function increase_jacobi_parameter(s,f)
+    if s==-1
+        Fun(f,JacobiWeight(f.space.β+1,f.space.α,space(f).space))
+    else
+        Fun(f,JacobiWeight(f.space.β,f.space.α+1,space(f).space))
+    end
+end
 
 
 
@@ -146,18 +158,18 @@ end
 
 ## Algebra
 
-function /(c::Number,f::Fun{JW}) where JW<:JacobiWeight
+function /(c::Number,f::Fun{<:JacobiWeight})
     g=c/Fun(space(f).space,f.coefficients)
     Fun(JacobiWeight(-f.space.β,-f.space.α,space(g)),g.coefficients)
 end
 
-function ^(f::Fun{JW}, k::AbstractFloat) where JW<:JacobiWeight
+function ^(f::Fun{<:JacobiWeight}, k::AbstractFloat)
     S=space(f)
     g=Fun(S.space,coefficients(f))^k
     Fun(JacobiWeight(k*S.β,k*S.α,space(g)),coefficients(g))
 end
 
-function *(f::Fun{JW1},g::Fun{JW2}) where {JW1<:JacobiWeight,JW2<:JacobiWeight}
+function *(f::Fun{<:JacobiWeight}, g::Fun{<:JacobiWeight})
     @assert domainscompatible(f,g)
     fβ,fα=f.space.β,f.space.α
     gβ,gα=g.space.β,g.space.α
@@ -170,7 +182,7 @@ function *(f::Fun{JW1},g::Fun{JW2}) where {JW1<:JacobiWeight,JW2<:JacobiWeight}
 end
 
 
-/(f::Fun{JW1},g::Fun{JW2}) where {JW1<:JacobiWeight,JW2<:JacobiWeight}=f*(1/g)
+/(f::Fun{<:JacobiWeight}, g::Fun{<:JacobiWeight}) = f*(1/g)
 
 # O(min(m,n)) Ultraspherical conjugated inner product
 
@@ -213,77 +225,86 @@ function conjugatedinnerproduct(::Chebyshev,u::AbstractVector,v::AbstractVector)
     end
 end
 
+function _bilinearformU(lfn, d, λ, f, g)
+    lfn(d)/2*conjugatedinnerproduct(Ultraspherical(λ,d), coefficients(g), coefficients(g))
+end
 
-function bilinearform(f::Fun{JacobiWeight{Ultraspherical{LT,D,R},D,R,TT}},g::Fun{Ultraspherical{LT,D,R}}) where {LT,D,R,TT}
+function bilinearform(f::Fun{<:JacobiWeight{U,D,R}}, g::Fun{U}) where {D,R,U<:Ultraspherical{<:Any,D,R}}
     d = domain(f)
     @assert d == domain(g)
     λ = order(space(f).space)
     if order(space(g)) == λ && f.space.β == f.space.α == λ-0.5
-        return complexlength(d)/2*conjugatedinnerproduct(Ultraspherical(λ,d),f.coefficients,g.coefficients)
+        return _bilinearformU(complexlength, d, λ, f, g)
     else
         return defaultbilinearform(f,g)
     end
 end
 
-function bilinearform(f::Fun{Ultraspherical{LT,D,R}},
-                    g::Fun{JacobiWeight{Ultraspherical{LT,D,R},D,R,TT}}) where {LT,D,R,TT}
+function bilinearform(f::Fun{U}, g::Fun{<:JacobiWeight{U,D,R}}) where {D,R,U<:Ultraspherical{<:Any,D,R}}
     d = domain(f)
     @assert d == domain(g)
     λ = order(space(f))
     if order(space(g).space) == λ && g.space.β == g.space.α == λ-0.5
-        return complexlength(d)/2*conjugatedinnerproduct(Ultraspherical(λ,d),f.coefficients,g.coefficients)
+        return _bilinearformU(complexlength, d, λ, f, g)
     else
         return defaultbilinearform(f,g)
     end
 end
 
-function bilinearform(f::Fun{JacobiWeight{Ultraspherical{LT,D,R},D,R,TT1}},
-                    g::Fun{JacobiWeight{Ultraspherical{LT,D,R},D,R,TT2}}) where {LT,D,R,TT1,TT2}
+function bilinearform(f::Fun{<:JacobiWeight{U,D,R}},
+        g::Fun{<:JacobiWeight{U,D,R}}) where {D,R,U<:Ultraspherical{<:Any,D,R}}
+
     d = domain(f)
     @assert d == domain(g)
     λ = order(space(f).space)
     if order(space(g).space) == λ && f.space.β+g.space.β == f.space.α+g.space.α == λ-0.5
-        return complexlength(domain(f))/2*conjugatedinnerproduct(Ultraspherical(λ,d),f.coefficients,g.coefficients)
+        return _bilinearformU(complexlength, d, λ, f, g)
     else
         return defaultbilinearform(f,g)
     end
 end
 
-function linebilinearform(f::Fun{JacobiWeight{Ultraspherical{LT,D,R},D,R,TT}},g::Fun{Ultraspherical{LT,D,R}}) where {LT,D,R,TT}
+function linebilinearform(f::Fun{<:JacobiWeight{U,D,R}},
+        g::Fun{U}) where {D,R,U<:Ultraspherical{<:Any,D,R}}
+
     d = domain(f)
     @assert d == domain(g)
     λ = order(space(f).space)
     if order(space(g)) == λ && f.space.β == f.space.α == λ-0.5
-        return arclength(d)/2*conjugatedinnerproduct(Ultraspherical(λ,d),f.coefficients,g.coefficients)
+        return _bilinearformU(arclength, d, λ, f, g)
     else
         return defaultlinebilinearform(f,g)
     end
 end
 
-function linebilinearform(f::Fun{Ultraspherical{LT,D,R}},g::Fun{JacobiWeight{Ultraspherical{LT,D,R},D,R,TT}}) where {LT,D,R,TT}
+function linebilinearform(f::Fun{U},
+        g::Fun{<:JacobiWeight{U,D,R}}) where {D,R,U<:Ultraspherical{<:Any,D,R}}
+
     d = domain(f)
     @assert d == domain(g)
     λ = order(space(f))
     if order(space(g).space) == λ &&  g.space.β == g.space.α == λ-0.5
-        return arclength(d)/2*conjugatedinnerproduct(Ultraspherical(λ,d),f.coefficients,g.coefficients)
+        return _bilinearformU(arclength, d, λ, f, g)
     else
         return defaultlinebilinearform(f,g)
     end
 end
 
-function linebilinearform(f::Fun{JacobiWeight{Ultraspherical{LT,D,R},D,R,TT1}},g::Fun{JacobiWeight{Ultraspherical{LT,D,R},D,R,TT2}}) where {LT,D,R,TT1,TT2}
+function linebilinearform(f::Fun{<:JacobiWeight{U,D,R}},
+        g::Fun{<:JacobiWeight{U,D,R}}) where {D,R,U<:Ultraspherical{<:Any,D,R}}
+
     d = domain(f)
     @assert d == domain(g)
     λ = order(space(f).space)
     if order(space(g).space) == λ &&  f.space.β+g.space.β == f.space.α+g.space.α == λ-0.5
-        return arclength(d)/2*conjugatedinnerproduct(Ultraspherical(λ,d),f.coefficients,g.coefficients)
+        return _bilinearformU(arclength, d, λ, f, g)
     else
         return defaultlinebilinearform(f,g)
     end
 end
 
 
-function bilinearform(f::Fun{JacobiWeight{J,DD,RR,TT}},g::Fun{J}) where {J<:Jacobi,DD<:IntervalOrSegment,RR,TT}
+function bilinearform(f::Fun{<:JacobiWeight{J,<:IntervalOrSegment}}, g::Fun{J}) where {J<:Jacobi}
     @assert domain(f) == domain(g)
     if f.space.β == f.space.space.a == g.space.a && f.space.α == f.space.space.b == g.space.b
         return complexlength(domain(f))/2*conjugatedinnerproduct(g.space,f.coefficients,g.coefficients)
@@ -293,7 +314,7 @@ function bilinearform(f::Fun{JacobiWeight{J,DD,RR,TT}},g::Fun{J}) where {J<:Jaco
 end
 
 function bilinearform(f::Fun{J},
-                      g::Fun{JacobiWeight{J,DD,RR,TT}}) where {J<:Jacobi,DD<:IntervalOrSegment,RR,TT}
+                      g::Fun{<:JacobiWeight{J,<:IntervalOrSegment}}) where {J<:Jacobi}
     @assert domain(f) == domain(g)
     if g.space.β == g.space.space.a == f.space.a && g.space.α == g.space.space.b == f.space.b
         return complexlength(domain(f))/2*conjugatedinnerproduct(f.space,f.coefficients,g.coefficients)
@@ -302,8 +323,7 @@ function bilinearform(f::Fun{J},
     end
 end
 
-function bilinearform(f::Fun{JacobiWeight{J,DD,RR,TT}},
-                      g::Fun{JacobiWeight{J,DD,RR,TT}}) where {J<:Jacobi,DD<:IntervalOrSegment,RR,TT}
+function bilinearform(f::Fun{JW}, g::Fun{JW}) where {J<:Jacobi,DD<:IntervalOrSegment,JW<:JacobiWeight{J,DD}}
     @assert domain(f) == domain(g)
     if f.space.β + g.space.β == f.space.space.a == g.space.space.a && f.space.α + g.space.α == f.space.space.b == g.space.space.b
         return complexlength(domain(f))/2*conjugatedinnerproduct(f.space.space,f.coefficients,g.coefficients)
@@ -313,7 +333,7 @@ function bilinearform(f::Fun{JacobiWeight{J,DD,RR,TT}},
 end
 
 
-function linebilinearform(f::Fun{JacobiWeight{J,DD,RR,TT}},g::Fun{J}) where {J<:Jacobi,DD<:IntervalOrSegment,RR,TT}
+function linebilinearform(f::Fun{<:JacobiWeight{J,<:IntervalOrSegment}}, g::Fun{J}) where {J<:Jacobi}
     @assert domain(f) == domain(g)
     if f.space.β == f.space.space.a == g.space.a && f.space.α == f.space.space.b == g.space.b
         return arclength(domain(f))/2*conjugatedinnerproduct(g.space,f.coefficients,g.coefficients)
@@ -322,7 +342,7 @@ function linebilinearform(f::Fun{JacobiWeight{J,DD,RR,TT}},g::Fun{J}) where {J<:
     end
 end
 
-function linebilinearform(f::Fun{J},g::Fun{JacobiWeight{J,DD,RR,TT}}) where {J<:Jacobi,DD<:IntervalOrSegment,RR,TT}
+function linebilinearform(f::Fun{J}, g::Fun{<:JacobiWeight{J,<:IntervalOrSegment}}) where {J<:Jacobi}
     @assert domain(f) == domain(g)
     if g.space.β == g.space.space.a == f.space.a && g.space.α == g.space.space.b == f.space.b
         return arclength(domain(f))/2*conjugatedinnerproduct(f.space,f.coefficients,g.coefficients)
@@ -331,7 +351,8 @@ function linebilinearform(f::Fun{J},g::Fun{JacobiWeight{J,DD,RR,TT}}) where {J<:
     end
 end
 
-function linebilinearform(f::Fun{JacobiWeight{J,DD,RR,TT}}, g::Fun{JacobiWeight{J,DD,RR,TT}}) where {J<:Jacobi,DD<:IntervalOrSegment,RR,TT}
+function linebilinearform(f::Fun{JW}, g::Fun{JW}) where {
+            J<:Jacobi,DD<:IntervalOrSegment,JW<:JacobiWeight{J,DD}}
     @assert domain(f) == domain(g)
     if f.space.β + g.space.β == f.space.space.a == g.space.space.a && f.space.α + g.space.α == f.space.space.b == g.space.space.b
         return arclength(domain(f))/2*conjugatedinnerproduct(f.space.space,f.coefficients,g.coefficients)
@@ -341,7 +362,7 @@ function linebilinearform(f::Fun{JacobiWeight{J,DD,RR,TT}}, g::Fun{JacobiWeight{
 end
 
 
-function Derivative(S::WeightedJacobi{DDD,RR}) where {DDD<:IntervalOrSegment,RR}
+function Derivative(S::WeightedJacobi{<:IntervalOrSegment})
     if S.β>0 && S.β>0 && S.β==S.space.b && S.α==S.space.a
         ConcreteDerivative(S,1)
     else
@@ -349,11 +370,11 @@ function Derivative(S::WeightedJacobi{DDD,RR}) where {DDD<:IntervalOrSegment,RR}
     end
 end
 
-bandwidths(D::ConcreteDerivative{WeightedJacobi{DDD,RR}}) where {DDD<:IntervalOrSegment,RR} = 1,0
-rangespace(D::ConcreteDerivative{WeightedJacobi{DDD,RR}}) where {DDD<:IntervalOrSegment,RR} =
+bandwidths(D::ConcreteDerivative{<:WeightedJacobi{<:IntervalOrSegment}}) = 1,0
+rangespace(D::ConcreteDerivative{<:WeightedJacobi{<:IntervalOrSegment}}) =
     WeightedJacobi(domainspace(D).β-1,domainspace(D).α-1,domain(D))
 
-getindex(D::ConcreteDerivative{WeightedJacobi{DDD,RR}},k::Integer,j::Integer) where {DDD<:IntervalOrSegment,RR} =
+getindex(D::ConcreteDerivative{<:WeightedJacobi{<:IntervalOrSegment}}, k::Integer, j::Integer) =
     j==k-1 ? eltype(D)(-4(k-1)./complexlength(domain(D))) : zero(eltype(D))
 
 
@@ -363,7 +384,7 @@ for (Func,Len,Sum) in ((:DefiniteIntegral,:complexlength,:sum),(:DefiniteLineInt
     ConcFunc = Meta.parse("Concrete"*string(Func))
 
     @eval begin
-        function getindex(Σ::$ConcFunc{JacobiWeight{Jacobi{D,R},D,R,TT},T},k::Integer) where {D<:IntervalOrSegment,R,T,TT}
+        function getindex(Σ::$ConcFunc{<:JacobiWeight{Jacobi{D,R},D,R},T}, k::Integer) where {D<:IntervalOrSegment,R,T}
             dsp = domainspace(Σ)
 
             if dsp.β == dsp.space.b && dsp.α == dsp.space.a
@@ -374,7 +395,7 @@ for (Func,Len,Sum) in ((:DefiniteIntegral,:complexlength,:sum),(:DefiniteLineInt
             end
         end
 
-        function bandwidths(Σ::$ConcFunc{JacobiWeight{Jacobi{D,R},D,R,TT}}) where {D<:IntervalOrSegment,R,TT}
+        function bandwidths(Σ::$ConcFunc{<:JacobiWeight{Jacobi{D,R},D,R}}) where {D<:IntervalOrSegment,R}
             β,α = domainspace(Σ).β,domainspace(Σ).α
             if domainspace(Σ).β == domainspace(Σ).space.b && domainspace(Σ).α == domainspace(Σ).space.a
                 0,0  # first entry
@@ -387,7 +408,7 @@ end
 
 
 ## <: IntervalOrSegment avoids a julia bug
-function Multiplication(f::Fun{JacobiWeight{C,DD,RR,TT}}, S::Jacobi) where {C<:ConstantSpace,DD<:IntervalOrSegmentDomain,RR,TT}
+function Multiplication(f::Fun{<:JacobiWeight{<:ConstantSpace,<:IntervalOrSegmentDomain}}, S::Jacobi)
     # this implements (1+x)*P and (1-x)*P special case
     # see DLMF (18.9.6)
     d=domain(f)
@@ -410,11 +431,12 @@ function Multiplication(f::Fun{JacobiWeight{C,DD,RR,TT}}, S::Jacobi) where {C<:C
     end
 end
 
-Multiplication(f::Fun{JacobiWeight{C,DD,RR,TT}},
-               S::Union{Ultraspherical,Chebyshev}) where {C<:ConstantSpace,DD<:IntervalOrSegmentDomain,RR,TT} =
+Multiplication(f::Fun{<:JacobiWeight{<:ConstantSpace,<:IntervalOrSegmentDomain}},
+               S::Union{Ultraspherical,Chebyshev}) =
     MultiplicationWrapper(f,Multiplication(f,Jacobi(S))*Conversion(S,Jacobi(S)))
 
-function rangespace(M::ConcreteMultiplication{JacobiWeight{C,DD,RR,TT},J}) where {J<:Jacobi,C<:ConstantSpace,DD<:IntervalOrSegmentDomain,RR,TT}
+function rangespace(M::ConcreteMultiplication{<:
+                        JacobiWeight{<:ConstantSpace,<:IntervalOrSegmentDomain},<:Jacobi})
     S=domainspace(M)
     if space(M.f).β==1
         # multiply by (1+x)
@@ -427,10 +449,13 @@ function rangespace(M::ConcreteMultiplication{JacobiWeight{C,DD,RR,TT},J}) where
     end
 end
 
-bandwidths(::ConcreteMultiplication{JacobiWeight{C,DD,RR,TT},J}) where {J<:Jacobi,C<:ConstantSpace,DD<:IntervalOrSegmentDomain,RR,TT} = 1,0
+bandwidths(::ConcreteMultiplication{<:
+                JacobiWeight{<:ConstantSpace,<:IntervalOrSegmentDomain},<:Jacobi}) = 1,0
 
 
-function getindex(M::ConcreteMultiplication{JacobiWeight{C,DD,RR,TT},J},k::Integer,j::Integer) where {J<:Jacobi,C<:ConstantSpace,DD<:IntervalOrSegmentDomain,RR,TT}
+function getindex(M::ConcreteMultiplication{
+            <:JacobiWeight{<:ConstantSpace,<:IntervalOrSegmentDomain},<:Jacobi},
+                k::Integer, j::Integer)
     @assert ncoefficients(M.f)==1
     a,b=domainspace(M).a,domainspace(M).b
     c=M.f.coefficients[1]
@@ -464,7 +489,7 @@ end
 
 
 for FUNC in (:maxspace_rule,:union_rule,:hasconversion)
-    @eval function $FUNC(A::WeightedJacobi{DD},B::Jacobi) where DD<:IntervalOrSegment
+    @eval function $FUNC(A::WeightedJacobi{<:IntervalOrSegment}, B::Jacobi)
         if A.β==A.α+1 && A.space.b>0
             $FUNC(Jacobi(A.space.b-1,A.space.a,domain(A)),B)
         elseif A.α==A.β+1 && A.space.a>0

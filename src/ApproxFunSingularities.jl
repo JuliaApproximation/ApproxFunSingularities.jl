@@ -20,7 +20,7 @@ import ApproxFunBase: Fun, SumSpace, SubSpace, WeightSpace, NoSpace,
             linesum, differentiate, integrate, linebilinearform, bilinearform,
             subspace_coefficients, sumspacecoefficients,
             specialfunctionnormalizationpoint, Segment, IntervalOrSegmentDomain,
-            Vec, eps, arclength, complexlength, tocanonical, fromcanonicalD,
+            eps, arclength, complexlength, tocanonical, fromcanonicalD,
             tocanonicalD, canonicaldomain, setcanonicaldomain,
             coefficients, isconvertible, SpaceOperator, cfstype, mobius, roots,
             splitatroots, domaintype, rangetype, weight, isapproxinteger,
@@ -36,6 +36,8 @@ import Base: convert, getindex, *, /, ^,
             show, sum, cumsum, complex, sqrt, abs, in, first, last,
             union, isapprox, zeros, one, length, ones, exp, log
 
+using StaticArrays: SVector
+
 include("divide_singularity.jl")
 include("JacobiWeight.jl")
 include("JacobiWeightOperators.jl")
@@ -43,13 +45,13 @@ include("JacobiWeightChebyshev.jl")
 include("LogWeight.jl")
 include("ExpWeight.jl")
 
-/(c::Number,f::Fun{Ultraspherical{λ,DD,RR}}) where {λ,DD,RR} = c/Fun(f,Chebyshev(domain(f)))
+/(c::Number,f::Fun{<:Ultraspherical}) = c/Fun(f,Chebyshev(domain(f)))
 /(c::Number,f::Fun{<:PolynomialSpace{<:IntervalOrSegment}}) = c/Fun(f,Chebyshev(domain(f)))
 /(c::Number,f::Fun{<:Chebyshev}) = setdomain(c/setcanonicaldomain(f),domain(f))
 
 scaleshiftdomain(f::Fun,sc,sh) = setdomain(f,sc .* domain(f) .+ sh)
 
-function /(c::Number,f::Fun{Chebyshev{DD,RR}}) where {DD<:IntervalOrSegment,RR}
+function /(c::Number,f::Fun{<:Chebyshev{<:IntervalOrSegment}})
     fc = setcanonicaldomain(f)
     d=domain(f)
     # if domain f is small then the pts get projected in
@@ -224,7 +226,7 @@ function exp(f::Fun{<:JacobiWeight{<:Any,<:ChebyshevInterval}})
         D=Derivative(s)
         B=Evaluation(s,xmax)
 
-        \([B,D-f'],Any[opfxmax,0.];tolerance=eps(cfstype(f))*opmax)
+        \([B,D-f'], [opfxmax,0.]; tolerance=eps(cfstype(f))*opmax)
     end
 end
 
@@ -233,7 +235,7 @@ end
 
 # Add endpoints for JacobiWeight
 # TODO: what about cancellation?
-function roots(f::Fun{S,T}) where {S<:JacobiWeight,T}
+function roots(f::Fun{<:JacobiWeight})
     sp=space(f)
     d=domain(sp)
     rts=roots(Fun(sp.space,f.coefficients))
@@ -261,7 +263,7 @@ for Func in (:DefiniteIntegral,:DefiniteLineIntegral)
 end
 
 ## Integration
-function integrate(f::Fun{LW}) where LW <: LaguerreWeight{LL} where LL <: Laguerre
+function integrate(f::Fun{<:LaguerreWeight{<:Laguerre}})
     α = space(f).α;
     n = length(f.coefficients);
     if space(f).space.α != α

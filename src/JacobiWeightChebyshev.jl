@@ -1,5 +1,3 @@
-
-
 function coefficients(f::AbstractVector,sp1::JacobiWeight{C,DD},sp2::JacobiWeight{C,DD}) where {C<:Chebyshev,DD<:IntervalOrSegment}
     β,α=sp1.β,sp1.α
     c,d=sp2.β,sp2.α
