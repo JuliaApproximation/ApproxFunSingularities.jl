@@ -40,6 +40,12 @@ using StaticArrays: SVector
 
 strictconvert(::Type{T}, x) where {T} = convert(T, x)::T
 
+isapproxinteger_addhalf(a) = isapproxinteger(a + 0.5)
+isapproxinteger_addhalf(::Integer) = false
+
+isequalminhalf(x) = x == -0.5
+isequalminhalf(::Integer) = false
+
 include("divide_singularity.jl")
 include("JacobiWeight.jl")
 include("JacobiWeightOperators.jl")

@@ -233,7 +233,7 @@ function bilinearform(f::Fun{<:JacobiWeight{U,D,R}}, g::Fun{U}) where {D,R,U<:Ul
     d = domain(f)
     @assert d == domain(g)
     λ = order(space(f).space)
-    if order(space(g)) == λ && f.space.β == f.space.α == λ-0.5
+    if isapproxminhalf(f.space.β - λ) && isapproxminhalf(f.space.α - λ) && order(space(g)) == λ
         return _bilinearformU(complexlength, d, λ, f, g)
     else
         return defaultbilinearform(f,g)
@@ -244,7 +244,7 @@ function bilinearform(f::Fun{U}, g::Fun{<:JacobiWeight{U,D,R}}) where {D,R,U<:Ul
     d = domain(f)
     @assert d == domain(g)
     λ = order(space(f))
-    if order(space(g).space) == λ && g.space.β == g.space.α == λ-0.5
+    if isapproxminhalf(g.space.β - λ) && isapproxminhalf(g.space.α - λ) && order(space(g).space) == λ
         return _bilinearformU(complexlength, d, λ, f, g)
     else
         return defaultbilinearform(f,g)
@@ -257,7 +257,8 @@ function bilinearform(f::Fun{<:JacobiWeight{U,D,R}},
     d = domain(f)
     @assert d == domain(g)
     λ = order(space(f).space)
-    if order(space(g).space) == λ && f.space.β+g.space.β == f.space.α+g.space.α == λ-0.5
+    if isapproxminhalf(f.space.β+g.space.β-λ) && isapproxminhalf(f.space.α+g.space.α-λ) &&
+            order(space(g).space) == λ
         return _bilinearformU(complexlength, d, λ, f, g)
     else
         return defaultbilinearform(f,g)
@@ -270,7 +271,7 @@ function linebilinearform(f::Fun{<:JacobiWeight{U,D,R}},
     d = domain(f)
     @assert d == domain(g)
     λ = order(space(f).space)
-    if order(space(g)) == λ && f.space.β == f.space.α == λ-0.5
+    if isapproxminhalf(f.space.β - λ) && isapproxminhalf(f.space.α - λ) && order(space(g)) == λ
         return _bilinearformU(arclength, d, λ, f, g)
     else
         return defaultlinebilinearform(f,g)
@@ -283,7 +284,7 @@ function linebilinearform(f::Fun{U},
     d = domain(f)
     @assert d == domain(g)
     λ = order(space(f))
-    if order(space(g).space) == λ &&  g.space.β == g.space.α == λ-0.5
+    if isapproxminhalf(g.space.β-λ) && isapproxminhalf(g.space.α-λ) && order(space(g).space) == λ
         return _bilinearformU(arclength, d, λ, f, g)
     else
         return defaultlinebilinearform(f,g)
@@ -296,7 +297,8 @@ function linebilinearform(f::Fun{<:JacobiWeight{U,D,R}},
     d = domain(f)
     @assert d == domain(g)
     λ = order(space(f).space)
-    if order(space(g).space) == λ &&  f.space.β+g.space.β == f.space.α+g.space.α == λ-0.5
+    if isapproxminhalf(f.space.β+g.space.β-λ) && isapproxminhalf(f.space.α+g.space.α-λ) &&
+            order(space(g).space) == λ
         return _bilinearformU(arclength, d, λ, f, g)
     else
         return defaultlinebilinearform(f,g)
@@ -381,10 +383,10 @@ getindex(D::ConcreteDerivative{<:WeightedJacobi{<:IntervalOrSegment}}, k::Intege
 
 
 for (Func,Len,Sum) in ((:DefiniteIntegral,:complexlength,:sum),(:DefiniteLineIntegral,:arclength,:linesum))
-    ConcFunc = Meta.parse("Concrete"*string(Func))
+    ConcFunc = Symbol(:Concrete, Func)
 
     @eval begin
-        function getindex(Σ::$ConcFunc{<:JacobiWeight{Jacobi{D,R},D,R},T}, k::Integer) where {D<:IntervalOrSegment,R,T}
+        function getindex(Σ::$ConcFunc{<:JacobiWeight{<:Jacobi{D,R},D,R},T}, k::Integer) where {D<:IntervalOrSegment,R,T}
             dsp = domainspace(Σ)
 
             if dsp.β == dsp.space.b && dsp.α == dsp.space.a
@@ -395,7 +397,7 @@ for (Func,Len,Sum) in ((:DefiniteIntegral,:complexlength,:sum),(:DefiniteLineInt
             end
         end
 
-        function bandwidths(Σ::$ConcFunc{<:JacobiWeight{Jacobi{D,R},D,R}}) where {D<:IntervalOrSegment,R}
+        function bandwidths(Σ::$ConcFunc{<:JacobiWeight{<:Jacobi{D,R},D,R}}) where {D<:IntervalOrSegment,R}
             β,α = domainspace(Σ).β,domainspace(Σ).α
             if domainspace(Σ).β == domainspace(Σ).space.b && domainspace(Σ).α == domainspace(Σ).space.a
                 0,0  # first entry
