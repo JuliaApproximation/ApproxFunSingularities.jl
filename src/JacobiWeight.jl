@@ -21,10 +21,10 @@ struct JacobiWeight{S,DD,RR,T<:Real} <: WeightSpace{S,DD,RR}
     end
 end
 
-const WeightedJacobi{D,R} = JacobiWeight{Jacobi{D,R},D,R,R}
+const WeightedJacobi{D,R} = JacobiWeight{<:Jacobi{D,R},D,R,R}
 
 JacobiWeight{S,DD,RR,T}(β,α,space::Space) where {S,DD,RR,T} =
-    JacobiWeight{S,DD,RR,T}(convert(T,β)::T, convert(T,α)::T, convert(S,space)::S)
+    JacobiWeight{S,DD,RR,T}(strictconvert(T,β)::T, strictconvert(T,α)::T, convert(S,space)::S)
 
 JacobiWeight(a::Number, b::Number, d::Space) =
     JacobiWeight{typeof(d),domaintype(d),rangetype(d),promote_type(eltype(a),eltype(b))}(a,b,d)
@@ -149,7 +149,7 @@ function union_rule(A::ConstantSpace,B::JacobiWeight{P}) where P<:PolynomialSpac
     # that the parameters are integers
     # when the parameters are -1 we keep them
     if isapproxinteger(B.β) && isapproxinteger(B.α)
-        JacobiWeight(min(B.β,0.),min(B.α,0.),B.space)
+        JacobiWeight(min(B.β,zero(B.β)),min(B.α,zero(B.α)),B.space)
     else
         NoSpace()
     end
@@ -174,7 +174,7 @@ function *(f::Fun{<:JacobiWeight}, g::Fun{<:JacobiWeight})
     fβ,fα=f.space.β,f.space.α
     gβ,gα=g.space.β,g.space.α
     m=(Fun(space(f).space,f.coefficients).*Fun(space(g).space,g.coefficients))
-    if isapprox(fβ+gβ,0)&&isapprox(fα+gα,0)
+    if isapprox(fβ+gβ,0) && isapprox(fα+gα,0)
         m
     else
         Fun(JacobiWeight(fβ+gβ,fα+gα,space(m)),m.coefficients)
@@ -198,7 +198,7 @@ function conjugatedinnerproduct(sp::Ultraspherical,u::AbstractVector{S},v::Abstr
     else
         T,mn = promote_type(S,V),min(length(u),length(v))
         if mn > 1
-            wi = sqrt(convert(T,π))*gamma(λ+one(T)/2)/gamma(λ+one(T))
+            wi = sqrt(strictconvert(T,π))*gamma(λ+one(T)/2)/gamma(λ+one(T))
             ret = u[1]*wi*v[1]
             for i=2:mn
               wi *= (i-2one(T)+2λ)/(i-one(T)+λ)*(i-2one(T)+λ)/(i-one(T))
@@ -206,7 +206,7 @@ function conjugatedinnerproduct(sp::Ultraspherical,u::AbstractVector{S},v::Abstr
             end
             return ret
         elseif mn > 0
-            wi = sqrt(convert(T,π))*gamma(λ+one(T)/2)/gamma(λ+one(T))
+            wi = sqrt(strictconvert(T,π))*gamma(λ+one(T)/2)/gamma(λ+one(T))
             return u[1]*wi*v[1]
         else
             return zero(promote_type(eltype(u),eltype(v)))
@@ -389,9 +389,9 @@ for (Func,Len,Sum) in ((:DefiniteIntegral,:complexlength,:sum),(:DefiniteLineInt
 
             if dsp.β == dsp.space.b && dsp.α == dsp.space.a
                 # TODO: copy and paste
-                k == 1 ? convert(T,$Sum(Fun(dsp,[one(T)]))) : zero(T)
+                k == 1 ? strictconvert(T,$Sum(Fun(dsp,[one(T)]))) : zero(T)
             else
-                convert(T,$Sum(Fun(dsp,[zeros(T,k-1);1])))
+                strictconvert(T,$Sum(Fun(dsp,[zeros(T,k-1);1])))
             end
         end
 

@@ -480,7 +480,7 @@ end
     end
 
     @testset "Definite integral" begin
-        for S in (WeightedJacobi(0,0), JacobiWeight(0,0, Legendre(1.1..2.3)), Legendre())
+        @testset for S in (WeightedJacobi(0,0), JacobiWeight(0,0, Legendre(1.1..2.3)), Legendre())
             B = DefiniteIntegral(S)
             testfunctional(B)
             @test ApproxFunBase.rowstop(B,1) == 1
