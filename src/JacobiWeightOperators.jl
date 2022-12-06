@@ -381,12 +381,6 @@ end
 
 ## Definite Integral
 
-isapproxinteger_addhalf(a) = isapproxinteger(a + 0.5)
-isapproxinteger_addhalf(::Integer) = false
-
-isequalminhalf(x) = x == -0.5
-isequalminhalf(::Integer) = false
-
 for (Func,Len,Sum) in ((:DefiniteIntegral,:complexlength,:sum),(:DefiniteLineIntegral,:arclength,:linesum))
     ConcFunc = Symbol(:Concrete, Func)
 
