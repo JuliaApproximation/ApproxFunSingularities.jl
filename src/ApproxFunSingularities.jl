@@ -38,6 +38,8 @@ import Base: convert, getindex, *, /, ^,
 
 using StaticArrays: SVector
 
+strictconvert(::Type{T}, x) where {T} = convert(T, x)::T
+
 include("divide_singularity.jl")
 include("JacobiWeight.jl")
 include("JacobiWeightOperators.jl")

@@ -381,6 +381,12 @@ end
 
 ## Definite Integral
 
+isapproxinteger_addhalf(a) = isapproxinteger(a + 0.5)
+isapproxinteger_addhalf(::Integer) = false
+
+isequalminhalf(x) = x == -0.5
+isequalminhalf(::Integer) = false
+
 for (Func,Len,Sum) in ((:DefiniteIntegral,:complexlength,:sum),(:DefiniteLineIntegral,:arclength,:linesum))
     ConcFunc = Symbol(:Concrete, Func)
 
@@ -396,10 +402,10 @@ for (Func,Len,Sum) in ((:DefiniteIntegral,:complexlength,:sum),(:DefiniteLineInt
             d = domain(Σ)
             C = $Len(d)/2
 
-            if dsp.β==dsp.α==λ-0.5
-                k == 1 ? convert(T,C*gamma(λ+one(T)/2)*gamma(one(T)/2)/gamma(λ+one(T))) : zero(T)
+            if isequalminhalf(dsp.β - λ) && isequalminhalf(dsp.α - λ)
+                k == 1 ? strictconvert(T,C*gamma(λ+one(T)/2)*gamma(one(T)/2)/gamma(λ+one(T))) : zero(T)
             else
-                convert(T,$Sum(Fun(dsp,[zeros(T,k-1);1])))
+                strictconvert(T,$Sum(Fun(dsp,[zeros(T,k-1);1])))
             end
         end
 
@@ -410,7 +416,7 @@ for (Func,Len,Sum) in ((:DefiniteIntegral,:complexlength,:sum),(:DefiniteLineInt
             d = domain(Σ)
             C = $Len(d)/2
 
-            if dsp.β==dsp.α==λ-0.5
+            if isequalminhalf(dsp.β - λ) && isequalminhalf(dsp.α - λ)
                 T[k == 1 ? C*gamma(λ+one(T)/2)*gamma(one(T)/2)/gamma(λ+one(T)) : zero(T) for k=kr]
             else
                 T[$Sum(Fun(dsp,[zeros(T,k-1);1])) for k=kr]
@@ -420,7 +426,7 @@ for (Func,Len,Sum) in ((:DefiniteIntegral,:complexlength,:sum),(:DefiniteLineInt
         function bandwidths(Σ::$ConcFunc{<:JacobiWeight{<:Ultraspherical{<:Any,D,R},D,R}}) where {D<:IntervalOrSegment,R}
             λ = order(domainspace(Σ).space)
             β,α = domainspace(Σ).β,domainspace(Σ).α
-            if β==α && isapproxinteger(β-0.5-λ) && λ ≤ ceil(Int,β)
+            if isapproxinteger_addhalf(β-λ) && β==α && λ ≤ ceil(Int,β)
                 0,2*(ceil(Int,β)-λ)
             else
                 0,∞
@@ -433,10 +439,10 @@ for (Func,Len,Sum) in ((:DefiniteIntegral,:complexlength,:sum),(:DefiniteLineInt
             d = domain(Σ)
             C = $Len(d)/2
 
-            if dsp.β==dsp.α==-0.5
-                k == 1 ? convert(T,C*π) : zero(T)
+            if isequalminhalf(dsp.β) && isequalminhalf(dsp.α)
+                k == 1 ? strictconvert(T,C*π) : zero(T)
             else
-                convert(T,$Sum(Fun(dsp,[zeros(T,k-1);1])))
+                strictconvert(T,$Sum(Fun(dsp,[zeros(T,k-1);1])))
             end
         end
 
@@ -446,7 +452,7 @@ for (Func,Len,Sum) in ((:DefiniteIntegral,:complexlength,:sum),(:DefiniteLineInt
             d = domain(Σ)
             C = $Len(d)/2
 
-            if dsp.β==dsp.α==-0.5
+            if isequalminhalf(dsp.β) && isequalminhalf(dsp.α)
                 T[k == 1 ? C*π : zero(T) for k=kr]
             else
                 T[$Sum(Fun(dsp,[zeros(T,k-1);1])) for k=kr]
@@ -455,7 +461,7 @@ for (Func,Len,Sum) in ((:DefiniteIntegral,:complexlength,:sum),(:DefiniteLineInt
 
         function bandwidths(Σ::$ConcFunc{<:JacobiWeight{Chebyshev{D,R},D,R}}) where {D<:IntervalOrSegment,R}
             β,α = domainspace(Σ).β,domainspace(Σ).α
-            if β==α && isapproxinteger(β-0.5) && 0 ≤ ceil(Int,β)
+            if isapproxinteger_addhalf(β) && β==α && 0 ≤ ceil(Int,β)
                 0,2ceil(Int,β)
             else
                 0,∞
