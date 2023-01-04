@@ -164,15 +164,15 @@ function jacobiweightDerivative(S::JacobiWeight{<:Any,<:ChebyshevInterval})
     elseif S.β==0
         w=Fun(JacobiWeight(0,1,ConstantSpace(d)),[1.])
 
-        DD=-S.α + w*Derivative(S.space)
-        rs=S.α==1 ? rangespace(DD) : JacobiWeight(0.,S.α-1,rangespace(DD))
-        DerivativeWrapper(SpaceOperator(DD,S,rs),1)
+        DDβ0=-S.α + w*Derivative(S.space)
+        rsβ0=S.α==1 ? rangespace(DDβ0) : JacobiWeight(0.,S.α-1,rangespace(DDβ0))
+        DerivativeWrapper(SpaceOperator(DDβ0,S,rsβ0),1)
     elseif S.α==0
         w=Fun(JacobiWeight(1,0,ConstantSpace(d)),[1.])
 
-        DD=S.β + w*Derivative(S.space)
-        rs=S.β==1 ? rangespace(DD) : JacobiWeight(S.β-1,0.,rangespace(DD))
-        DerivativeWrapper(SpaceOperator(DD,S,rs),1)
+        DDα0=S.β + w*Derivative(S.space)
+        rsα0=S.β==1 ? rangespace(DDα0) : JacobiWeight(S.β-1,0.,rangespace(DDα0))
+        DerivativeWrapper(SpaceOperator(DDα0,S,rsα0),1)
     else
         w=Fun(JacobiWeight(1,1,ConstantSpace(d)),[1.])
         x=Fun()

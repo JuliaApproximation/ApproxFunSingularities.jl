@@ -414,22 +414,25 @@ function Multiplication(f::Fun{<:JacobiWeight{<:ConstantSpace,<:IntervalOrSegmen
     # this implements (1+x)*P and (1-x)*P special case
     # see DLMF (18.9.6)
     d=domain(f)
-    if ((space(f).β==1 && space(f).α==0 && S.b >0) ||
-                        (space(f).β==0 && space(f).α==1 && S.a >0))
+    Sf = space(f)
+    if ((Sf.β==1 && Sf.α==0 && S.b >0) ||
+                        (Sf.β==0 && Sf.α==1 && S.a >0))
         ConcreteMultiplication(f,S)
-    elseif isapproxinteger(space(f).β) && space(f).β ≥ 1 && S.b >0
+    elseif isapproxinteger(Sf.β) && Sf.β ≥ 1 && S.b >0
         # decrement β and multiply again
-        M=Multiplication(f.coefficients[1]*jacobiweight(1.,0.,d),S)
-        MultiplicationWrapper(f,Multiplication(jacobiweight(space(f).β-1,space(f).α,d),rangespace(M))*M)
-    elseif isapproxinteger(space(f).α) && space(f).α ≥ 1 && S.a >0
+        M1 = ConcreteMultiplication(f.coefficients[1]*jacobiweight(1.,0.,d),S)
+        M1_out = Multiplication(jacobiweight(Sf.β-1,Sf.α,d), rangespace(M1)) * M1
+        MultiplicationWrapper(f, M1_out)
+    elseif isapproxinteger(Sf.α) && Sf.α ≥ 1 && S.a >0
         # decrement α and multiply again
-        M=Multiplication(f.coefficients[1]*jacobiweight(0.,1.,d),S)
-        MultiplicationWrapper(f,Multiplication(jacobiweight(space(f).β,space(f).α-1,d),rangespace(M))*M)
+        M2 = ConcreteMultiplication(f.coefficients[1]*jacobiweight(0.,1.,d),S)
+        M2_out = Multiplication(jacobiweight(Sf.β,Sf.α-1,d), rangespace(M2)) * M2
+        MultiplicationWrapper(f, M2_out)
     else
-# default JacobiWeight
-        M=Multiplication(Fun(space(f).space,f.coefficients),S)
-        rsp=JacobiWeight(space(f).β,space(f).α,rangespace(M))
-        MultiplicationWrapper(f,SpaceOperator(M,S,rsp))
+        # default JacobiWeight
+        M = Multiplication(Fun(Sf.space, f.coefficients), S)
+        rsp = JacobiWeight(Sf.β, Sf.α, rangespace(M))
+        MultiplicationWrapper(f, SpaceOperator(M,S,rsp))
     end
 end
 
