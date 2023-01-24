@@ -338,7 +338,7 @@ defaultConversion(A::JacobiWeight{<:Any,<:IntervalOrSegmentDomain},
 
 ## Evaluation
 
-function Base.getindex(op::ConcreteEvaluation{<:JacobiWeight,typeof(leftendpoint)}, kr::AbstractRange)
+function getindex(op::ConcreteEvaluation{<:JacobiWeight,typeof(leftendpoint)}, kr::AbstractRange)
     S=op.space
     @assert op.order ≤ 1
     d=domain(op)
@@ -358,7 +358,7 @@ function Base.getindex(op::ConcreteEvaluation{<:JacobiWeight,typeof(leftendpoint
     end
 end
 
-function  Base.getindex(op::ConcreteEvaluation{<:JacobiWeight,typeof(rightendpoint)}, kr::AbstractRange)
+function  getindex(op::ConcreteEvaluation{<:JacobiWeight,typeof(rightendpoint)}, kr::AbstractRange)
     S=op.space
     @assert op.order<=1
     d=domain(op)
