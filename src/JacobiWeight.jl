@@ -14,9 +14,10 @@ struct JacobiWeight{S,DD,RR,T<:Real} <: WeightSpace{S,DD,RR}
     α::T
     space::S
     function JacobiWeight{S,DD,RR,T}(β::T,α::T,space::S) where {S<:Space,DD,RR,T}
-        if isa(space,JacobiWeight)
-            new(β+space.β,α+space.α,space.space) else
-            new(β,α,space)
+        if space isa JacobiWeight
+            new(β+space.β, α+space.α, space.space)
+        else
+            new(β, α, space)
         end
     end
 end
