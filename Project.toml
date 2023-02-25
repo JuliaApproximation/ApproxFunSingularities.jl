@@ -1,6 +1,6 @@
 name = "ApproxFunSingularities"
 uuid = "f8fcb915-6b99-5be2-b79a-d6dbef8e6e7e"
-version = "0.3.7"
+version = "0.3.8"
 
 [deps]
 ApproxFunBase = "fbd15aa5-315a-5a7d-a8a4-24992e37be05"
