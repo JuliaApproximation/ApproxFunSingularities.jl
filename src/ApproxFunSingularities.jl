@@ -25,7 +25,7 @@ import ApproxFunBase: Fun, SumSpace, SubSpace, WeightSpace, NoSpace,
             coefficients, isconvertible, SpaceOperator, cfstype, mobius, roots,
             splitatroots, domaintype, rangetype, weight, isapproxinteger,
             dotu, components, promoterangespace, ∞, gamma,
-            assert_integer, SpecialEvalPtType, isleftendpoint, evaluation_point
+            assert_integer, SpecialEvalPtType, isleftendpoint, isrightendpoint, evaluation_point
 
 import ApproxFunOrthogonalPolynomials: order
 

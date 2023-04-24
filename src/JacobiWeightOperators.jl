@@ -339,10 +339,13 @@ defaultConversion(A::JacobiWeight{<:Any,<:IntervalOrSegmentDomain},
 ## Evaluation
 
 function getindex(op::ConcreteEvaluation{<:JacobiWeight,<:SpecialEvalPtType}, kr::AbstractRange)
-    if isleftendpoint(evaluation_point(op))
+    x = evaluation_point(op)
+    if isleftendpoint(x)
         _getindex_eval_leftendpoint(op, kr)
-    else
+    elseif isrightendpoint(x)
         _getindex_eval_rightendpoint(op, kr)
+    else
+        throw(ArgumentError("Evaluation is supported only at the leftendpoint/rightendpoint of the domain"))
     end
 end
 
