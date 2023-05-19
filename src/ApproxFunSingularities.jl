@@ -1,5 +1,5 @@
 module ApproxFunSingularities
-using Base, LinearAlgebra, Reexport, IntervalSets, DomainSets, Statistics
+using Base, LinearAlgebra, Reexport, IntervalSets, DomainSets, Statistics, SpecialFunctions
 
 @reexport using ApproxFunBase
 @reexport using ApproxFunOrthogonalPolynomials
@@ -25,7 +25,8 @@ import ApproxFunBase: Fun, SumSpace, SubSpace, WeightSpace, NoSpace,
             coefficients, isconvertible, SpaceOperator, cfstype, mobius, roots,
             splitatroots, domaintype, rangetype, weight, isapproxinteger,
             dotu, components, promoterangespace, ∞, gamma,
-            assert_integer, SpecialEvalPtType, isleftendpoint, isrightendpoint, evaluation_point
+            assert_integer, SpecialEvalPtType, isleftendpoint, isrightendpoint, evaluation_point,
+            @calculus_operator, ConcreteConversion, InterlaceOperator_Diagonal, UnsetSpace
 
 import ApproxFunOrthogonalPolynomials: order
 
@@ -52,6 +53,7 @@ include("JacobiWeightOperators.jl")
 include("JacobiWeightChebyshev.jl")
 include("LogWeight.jl")
 include("ExpWeight.jl")
+include("fractionalcalculus.jl")
 
 /(c::Number,f::Fun{<:Ultraspherical}) = c/Fun(f,Chebyshev(domain(f)))
 /(c::Number,f::Fun{<:PolynomialSpace{<:IntervalOrSegment}}) = c/Fun(f,Chebyshev(domain(f)))
