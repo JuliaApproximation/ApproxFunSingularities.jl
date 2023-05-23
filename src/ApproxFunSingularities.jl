@@ -26,7 +26,8 @@ import ApproxFunBase: Fun, SumSpace, SubSpace, WeightSpace, NoSpace,
             splitatroots, domaintype, rangetype, weight, isapproxinteger,
             dotu, components, promoterangespace, ∞, gamma,
             assert_integer, SpecialEvalPtType, isleftendpoint, isrightendpoint, evaluation_point,
-            @calculus_operator, ConcreteConversion, InterlaceOperator_Diagonal, UnsetSpace
+            @calculus_operator, ConcreteConversion, InterlaceOperator_Diagonal, UnsetSpace,
+            choosedomainspace
 
 import ApproxFunOrthogonalPolynomials: order
 
