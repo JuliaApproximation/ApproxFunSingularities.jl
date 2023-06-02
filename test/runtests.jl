@@ -17,7 +17,7 @@ using Test
 using Aqua
 @testset "Project quality" begin
     Aqua.test_all(ApproxFunSingularities, ambiguities=false,
-        stale_deps=(; ignore=[:ApproxFunBaseTest]))
+        stale_deps=(; ignore=[:ApproxFunBaseTest]), piracy = false)
 end
 
 @testset "Sqrt" begin
