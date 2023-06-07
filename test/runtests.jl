@@ -95,6 +95,14 @@ end
         x = Fun()
         M = Multiplication(x, JacobiWeight(0,0,Chebyshev()))
         @test exp(M).f == Multiplication(exp(x), Chebyshev()).f
+
+        g = Fun(x->√(1-x^2), JacobiWeight(0.5, 0.5, Jacobi(1,1)))
+        xg = Fun(x->x*√(1-x^2), JacobiWeight(0.5, 0.5, Jacobi(1,1)))
+        @test Multiplication(g) * Fun(NormalizedLegendre()) ≈ xg
+    end
+
+    @testset "Multiplication" begin
+
     end
 
     @testset "Derivative" begin
@@ -492,6 +500,10 @@ end
             f = Fun(exp, S)
             @test convert(Number, B*f) ≈ sum(Fun(exp,domain(S)))
         end
+
+        f = Fun(x->√(1-x^2), JacobiWeight(0.5, 0.5, NormalizedJacobi(1,1)))
+        g = Fun(x->√(1-x^2), JacobiWeight(0.5, 0.5, Jacobi(1,1)))
+        @test sum(f) ≈ sum(g) ≈ π/2
     end
 end
 
