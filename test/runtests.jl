@@ -101,10 +101,6 @@ end
         @test Multiplication(g) * Fun(NormalizedLegendre()) ≈ xg
     end
 
-    @testset "Multiplication" begin
-
-    end
-
     @testset "Derivative" begin
         S = JacobiWeight(-1.,-1.,Chebyshev(0..1))
 
@@ -504,6 +500,7 @@ end
         f = Fun(x->√(1-x^2), JacobiWeight(0.5, 0.5, NormalizedJacobi(1,1)))
         g = Fun(x->√(1-x^2), JacobiWeight(0.5, 0.5, Jacobi(1,1)))
         @test sum(f) ≈ sum(g) ≈ π/2
+        @test DefiniteIntegral() * f ≈ DefiniteIntegral() * g ≈ π/2
     end
 end
 
