@@ -54,6 +54,8 @@ isapproxhalfoddinteger(::Integer) = false
 isequalminhalf(x) = x == -0.5
 isequalminhalf(::Integer) = false
 
+const MaybeNormalizedPolynomialSpace{S<:PolynomialSpace} = Union{S, NormalizedPolynomialSpace{S}}
+
 include("divide_singularity.jl")
 include("JacobiWeight.jl")
 include("JacobiWeightOperators.jl")

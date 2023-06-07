@@ -9,8 +9,10 @@ using ApproxFunBaseTest: testbandedoperator, testtransforms, testfunctional,
 using ApproxFunOrthogonalPolynomials
 using ApproxFunOrthogonalPolynomials: order
 using ApproxFunSingularities
-using LinearAlgebra
+using HalfIntegers
 using IntervalSets
+using LinearAlgebra
+using OddEvenIntegers
 using SpecialFunctions
 using Test
 
@@ -21,6 +23,13 @@ using Aqua
         # only test formatting on VERSION >= v1.7
         # https://github.com/JuliaTesting/Aqua.jl/issues/105#issuecomment-1551405866
         project_toml_formatting = VERSION >= v"1.9")
+end
+
+@testset "utility function" begin
+    @test ApproxFunSingularities.isapproxhalfoddinteger(0.5)
+    @test ApproxFunSingularities.isapproxhalfoddinteger(half(1))
+    @test ApproxFunSingularities.isapproxhalfoddinteger(half(Odd(1)))
+    @test !ApproxFunSingularities.isapproxhalfoddinteger(1)
 end
 
 @testset "Sqrt" begin
@@ -95,6 +104,10 @@ end
         x = Fun()
         M = Multiplication(x, JacobiWeight(0,0,Chebyshev()))
         @test exp(M).f == Multiplication(exp(x), Chebyshev()).f
+
+        g = Fun(x->√(1-x^2), JacobiWeight(0.5, 0.5, Jacobi(1,1)))
+        xg = Fun(x->x*√(1-x^2), JacobiWeight(0.5, 0.5, Jacobi(1,1)))
+        @test Multiplication(g) * Fun(NormalizedLegendre()) ≈ xg
     end
 
     @testset "Derivative" begin
@@ -492,6 +505,11 @@ end
             f = Fun(exp, S)
             @test convert(Number, B*f) ≈ sum(Fun(exp,domain(S)))
         end
+
+        f = Fun(x->√(1-x^2), JacobiWeight(0.5, 0.5, NormalizedJacobi(1,1)))
+        g = Fun(x->√(1-x^2), JacobiWeight(0.5, 0.5, Jacobi(1,1)))
+        @test sum(f) ≈ sum(g) ≈ π/2
+        @test DefiniteIntegral() * f ≈ DefiniteIntegral() * g ≈ π/2
     end
 end
 

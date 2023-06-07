@@ -40,7 +40,7 @@ for (Func,Len) in ((:(Base.sum),:complexlength), (:linesum,:arclength))
                 return 0.5*$Len(d)*dotu(f.coefficients,c)
             end
         end
-        $Func(f::Fun{<:JacobiWeight{<:PolynomialSpace}}) =
+        $Func(f::Fun{<:JacobiWeight{<:MaybeNormalizedPolynomialSpace}}) =
             $Func(Fun(f,JacobiWeight(space(f).β, space(f).α, Chebyshev(domain(f)))))
     end
 end
@@ -219,7 +219,7 @@ function Multiplication(f::Fun, S::JacobiWeight)
     MultiplicationWrapper(f,SpaceOperator(M,S,rsp))
 end
 
-function Multiplication(f::Fun{<:JacobiWeight},S::PolynomialSpace)
+function Multiplication(f::Fun{<:JacobiWeight},S::MaybeNormalizedPolynomialSpace)
     M=Multiplication(Fun(space(f).space,f.coefficients),S)
     rsp=JacobiWeight(space(f).β,space(f).α,rangespace(M))
     MultiplicationWrapper(f,SpaceOperator(M,S,rsp))
