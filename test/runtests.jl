@@ -490,7 +490,7 @@ end
             @test ApproxFunBase.rowstop(B,1) == 1
             B[1] == arclength(domain(S))
             f = Fun(exp, S)
-            B*f == sum(Fun(exp,domain(S)))
+            @test convert(Number, B*f) ≈ sum(Fun(exp,domain(S)))
         end
     end
 end

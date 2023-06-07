@@ -40,10 +40,16 @@ import Base: convert, getindex, *, /, ^,
 
 using StaticArrays: SVector
 
+using HalfIntegers
+using OddEvenIntegers
+
+const HalfOddInteger{T<:Integer} = Half{Odd{T}}
+
 strictconvert(::Type{T}, x) where {T} = convert(T, x)::T
 
-isapproxinteger_addhalf(a) = isapproxinteger(a + 0.5)
-isapproxinteger_addhalf(::Integer) = false
+isapproxhalfoddinteger(a) = isapproxinteger(a + half(Odd(1)))
+isapproxhalfoddinteger(::HalfOddInteger) = true
+isapproxhalfoddinteger(::Integer) = false
 
 isequalminhalf(x) = x == -0.5
 isequalminhalf(::Integer) = false
