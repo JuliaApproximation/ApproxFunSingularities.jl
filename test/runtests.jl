@@ -9,8 +9,10 @@ using ApproxFunBaseTest: testbandedoperator, testtransforms, testfunctional,
 using ApproxFunOrthogonalPolynomials
 using ApproxFunOrthogonalPolynomials: order
 using ApproxFunSingularities
-using LinearAlgebra
+using HalfIntegers
 using IntervalSets
+using LinearAlgebra
+using OddEvenIntegers
 using SpecialFunctions
 using Test
 
@@ -21,6 +23,13 @@ using Aqua
         # only test formatting on VERSION >= v1.7
         # https://github.com/JuliaTesting/Aqua.jl/issues/105#issuecomment-1551405866
         project_toml_formatting = VERSION >= v"1.9")
+end
+
+@testset "utility function" begin
+    @test ApproxFunSingularities.isapproxhalfoddinteger(0.5)
+    @test ApproxFunSingularities.isapproxhalfoddinteger(half(1))
+    @test ApproxFunSingularities.isapproxhalfoddinteger(half(Odd(1)))
+    @test !ApproxFunSingularities.isapproxhalfoddinteger(1)
 end
 
 @testset "Sqrt" begin
