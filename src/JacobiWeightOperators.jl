@@ -431,7 +431,7 @@ for (Func,Len,Sum) in ((:DefiniteIntegral,:complexlength,:sum),(:DefiniteLineInt
         function bandwidths(Σ::$ConcFunc{<:JacobiWeight{<:Ultraspherical{<:Any,D,R},D,R}}) where {D<:IntervalOrSegment,R}
             λ = order(domainspace(Σ).space)
             β,α = domainspace(Σ).β,domainspace(Σ).α
-            if isapproxinteger_addhalf(β-λ) && β==α && λ ≤ ceil(Int,β)
+            if isapproxhalfoddinteger(β-λ) && β==α && λ ≤ ceil(Int,β)
                 0,2*(ceil(Int,β)-λ)
             else
                 0,∞
@@ -466,7 +466,7 @@ for (Func,Len,Sum) in ((:DefiniteIntegral,:complexlength,:sum),(:DefiniteLineInt
 
         function bandwidths(Σ::$ConcFunc{<:JacobiWeight{Chebyshev{D,R},D,R}}) where {D<:IntervalOrSegment,R}
             β,α = domainspace(Σ).β,domainspace(Σ).α
-            if isapproxinteger_addhalf(β) && β==α && 0 ≤ ceil(Int,β)
+            if isapproxhalfoddinteger(β) && β==α && 0 ≤ ceil(Int,β)
                 0,2ceil(Int,β)
             else
                 0,∞
