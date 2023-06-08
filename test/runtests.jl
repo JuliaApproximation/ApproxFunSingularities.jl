@@ -193,6 +193,13 @@ end
         s = JacobiWeight(1, 1, us)
         @test order(s) == order(us)
     end
+
+    @testset "inference in maxspace" begin
+        sp = JacobiWeight(half(Odd(1)), half(Odd(1)), Legendre())
+        @test (@inferred maxspace(sp, sp)) == sp
+
+        @test (@inferred maxspace(sp, Legendre())) == ApproxFunBase.NoSpace()
+    end
 end
 
 @testset "Ray and Line" begin
