@@ -3,7 +3,7 @@ module AFSTests
 using ApproxFunBase
 using ApproxFunBase: HeavisideSpace, PointSpace, ArraySpace, DiracSpace, PiecewiseSegment,
                         UnionDomain, resizedata!, CachedOperator, RaggedMatrix,
-                        Block, ∞, BandedBlockBandedMatrix
+                        Block, ∞, BandedBlockBandedMatrix, NoSpace
 using ApproxFunBaseTest: testbandedoperator, testtransforms, testfunctional,
                         testbandedblockbandedoperator
 using ApproxFunOrthogonalPolynomials
@@ -194,11 +194,23 @@ end
         @test order(s) == order(us)
     end
 
+    @testset "PiecewiseSpace" begin
+        ps = PiecewiseSpace((Chebyshev(0..1),Chebyshev(1..2)))
+        jps = JacobiWeight(0,0,ps)
+        @test domain(jps) == domain(ps)
+    end
+
     @testset "inference in maxspace" begin
         sp = JacobiWeight(half(Odd(1)), half(Odd(1)), Legendre())
         @test (@inferred maxspace(sp, sp)) == sp
 
-        @test (@inferred maxspace(sp, Legendre())) == ApproxFunBase.NoSpace()
+        sp2 = JacobiWeight(half(Odd(1)), half(Odd(1)), Legendre(0..1))
+        @test maxspace(sp, sp2) == NoSpace()
+
+        @test (@inferred maxspace(sp, Legendre())) == NoSpace()
+
+        sp = JacobiWeight(0.5,1,Legendre())
+        @test (@inferred Union{typeof(sp),NoSpace} ApproxFunBase.maxspace_rule(sp, sp)) == sp
     end
 end
 
@@ -414,6 +426,10 @@ end
         w=2/(sqrt(1-x)*sqrt(1+im*x))
         @test w(0.2im) ≈ 2/(sqrt(1-0.2im)*sqrt(1+im*(0.2im)))
         @test w(0.2) ≈ 2/(sqrt(1-0.2)*sqrt(1+im*(0.2)))
+    end
+
+    @testset "hasconversion" begin
+        @test ApproxFunBase.hasconversion(Legendre() + Legendre(), JacobiWeight(0,0,Legendre()))
     end
 end
 

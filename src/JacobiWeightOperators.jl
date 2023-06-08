@@ -245,20 +245,22 @@ end
 #     MultiplicationWrapper(f,SpaceOperator(M,dsp,S))
 # end
 
+function _maxspace_rule(A::JacobiWeight, B::JacobiWeight, f)
+    if domainscompatible(A,B) && isapproxinteger(A.β-B.β) && isapproxinteger(A.α-B.α)
+        ms = f(A.space,B.space)
+        if min(A.β,B.β) == 0 && min(A.α,B.α) == 0
+            return ms
+        else
+            return JacobiWeight(min(A.β,B.β),min(A.α,B.α),ms)
+        end
+    end
+    NoSpace()
+end
+
 ## Conversion
 for (OPrule,OP) in ((:maxspace_rule,:maxspace),(:union_rule,:union))
     @eval begin
-        function $OPrule(A::JacobiWeight, B::JacobiWeight)
-            if domainscompatible(A,B) && isapproxinteger(A.β-B.β) && isapproxinteger(A.α-B.α)
-                ms=$OP(A.space,B.space)
-                if min(A.β,B.β) == 0 && min(A.α,B.α) == 0
-                    return ms
-                else
-                    return JacobiWeight(min(A.β,B.β),min(A.α,B.α),ms)
-                end
-            end
-            NoSpace()
-        end
+        $OPrule(A::JacobiWeight, B::JacobiWeight) = _maxspace_rule(A, B, $OP)
         $OPrule(A::JacobiWeight, B::Space{<:IntervalOrSegmentDomain}) = $OPrule(A,JacobiWeight(0,0,B))
     end
 end
@@ -274,6 +276,8 @@ for FUNC in (:hasconversion,:isconvertible)
             $FUNC(A,JacobiWeight(0,0,B))
         $FUNC(B::Space{D},A::JacobiWeight{<:Any,D}) where {D<:IntervalOrSegmentDomain} =
             $FUNC(JacobiWeight(0,0,B),A)
+        $FUNC(A::SumSpace{<:Any,D},B::JacobiWeight{<:Any,D}) where {D<:IntervalOrSegmentDomain} =
+            all(s -> $FUNC(s, B), A.spaces)
     end
 end
 
