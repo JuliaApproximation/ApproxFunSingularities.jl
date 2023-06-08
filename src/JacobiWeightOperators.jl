@@ -251,7 +251,7 @@ for (OPrule,OP) in ((:maxspace_rule,:maxspace),(:union_rule,:union))
         function $OPrule(A::JacobiWeight, B::JacobiWeight)
             if domainscompatible(A,B) && isapproxinteger(A.β-B.β) && isapproxinteger(A.α-B.α)
                 ms=$OP(A.space,B.space)
-                if min(A.β,B.β)==0.0 && min(A.α,B.α) == 0.0
+                if min(A.β,B.β) == 0 && min(A.α,B.α) == 0
                     return ms
                 else
                     return JacobiWeight(min(A.β,B.β),min(A.α,B.α),ms)
@@ -259,7 +259,7 @@ for (OPrule,OP) in ((:maxspace_rule,:maxspace),(:union_rule,:union))
             end
             NoSpace()
         end
-        $OPrule(A::JacobiWeight, B::Space{<:IntervalOrSegmentDomain}) = $OPrule(A,JacobiWeight(0.,0.,B))
+        $OPrule(A::JacobiWeight, B::Space{<:IntervalOrSegmentDomain}) = $OPrule(A,JacobiWeight(0,0,B))
     end
 end
 
