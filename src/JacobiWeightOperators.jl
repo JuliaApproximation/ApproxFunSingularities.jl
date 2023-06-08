@@ -246,10 +246,13 @@ end
 # end
 
 function _maxspace_rule(A::JacobiWeight, B::JacobiWeight, f)
-    if isapproxinteger(A.β-B.β) && isapproxinteger(A.α-B.α)
+    if domainscompatible(A,B) && isapproxinteger(A.β-B.β) && isapproxinteger(A.α-B.α)
         ms = f(A.space,B.space)
-        ms isa NoSpace && return ms
-        return JacobiWeight(min(A.β,B.β),min(A.α,B.α),ms)
+        if min(A.β,B.β) == 0 && min(A.α,B.α) == 0
+            return ms
+        else
+            return JacobiWeight(min(A.β,B.β),min(A.α,B.α),ms)
+        end
     end
     NoSpace()
 end
@@ -273,6 +276,8 @@ for FUNC in (:hasconversion,:isconvertible)
             $FUNC(A,JacobiWeight(0,0,B))
         $FUNC(B::Space{D},A::JacobiWeight{<:Any,D}) where {D<:IntervalOrSegmentDomain} =
             $FUNC(JacobiWeight(0,0,B),A)
+        $FUNC(A::SumSpace{<:Any,D},B::JacobiWeight{<:Any,D}) where {D<:IntervalOrSegmentDomain} =
+            all(s -> $FUNC(s, B), A.spaces)
     end
 end
 

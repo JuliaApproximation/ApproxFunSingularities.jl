@@ -34,7 +34,7 @@ JacobiWeight(a::Number, b::Number, d::IntervalOrSegment) = JacobiWeight(a,b,Spac
 JacobiWeight(a::Number, b::Number, d) = JacobiWeight(a,b,Space(d))
 JacobiWeight(a::Number, b::Number) = JacobiWeight(a,b,Chebyshev())
 
-JacobiWeight(a::Number, b::Number,s::PiecewiseSpace) = PiecewiseSpace(JacobiWeight(a,b,components(s)))
+JacobiWeight(a::Number, b::Number,s::PiecewiseSpace) = PiecewiseSpace(JacobiWeight.(a,b,components(s)))
 
 """
     WeightedJacobi(β, α, d::Domain = ChebyshevInterval())
