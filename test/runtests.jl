@@ -3,7 +3,7 @@ module AFSTests
 using ApproxFunBase
 using ApproxFunBase: HeavisideSpace, PointSpace, ArraySpace, DiracSpace, PiecewiseSegment,
                         UnionDomain, resizedata!, CachedOperator, RaggedMatrix,
-                        Block, ∞, BandedBlockBandedMatrix
+                        Block, ∞, BandedBlockBandedMatrix, NoSpace
 using ApproxFunBaseTest: testbandedoperator, testtransforms, testfunctional,
                         testbandedblockbandedoperator
 using ApproxFunOrthogonalPolynomials
@@ -198,7 +198,13 @@ end
         sp = JacobiWeight(half(Odd(1)), half(Odd(1)), Legendre())
         @test (@inferred maxspace(sp, sp)) == sp
 
-        @test (@inferred maxspace(sp, Legendre())) == ApproxFunBase.NoSpace()
+        sp2 = JacobiWeight(half(Odd(1)), half(Odd(1)), Legendre(0..1))
+        @test maxspace(sp, sp2) == NoSpace()
+
+        @test (@inferred maxspace(sp, Legendre())) == NoSpace()
+
+        sp = JacobiWeight(0.5,1,Legendre())
+        @test (@inferred Union{typeof(sp),NoSpace} ApproxFunBase.maxspace_rule(sp, sp)) == sp
     end
 end
 
