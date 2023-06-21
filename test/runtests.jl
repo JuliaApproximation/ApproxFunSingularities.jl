@@ -212,6 +212,14 @@ end
         sp = JacobiWeight(0.5,1,Legendre())
         @test (@inferred Union{typeof(sp),NoSpace} ApproxFunBase.maxspace_rule(sp, sp)) == sp
     end
+
+    @testset "Evaluation bug" begin
+        S = Chebyshev()
+        E = Evaluation(S, 0.5)
+        EJW = Evaluation(JacobiWeight(0,0,S), 0.5)
+        @test EJW[4] ≈ E[4]
+        @test EJW[1:4] ≈ E[1:4]
+    end
 end
 
 @testset "Ray and Line" begin
