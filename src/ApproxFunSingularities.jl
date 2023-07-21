@@ -1,5 +1,5 @@
 module ApproxFunSingularities
-using Base, LinearAlgebra, Reexport, IntervalSets, DomainSets, Statistics, SpecialFunctions
+using LinearAlgebra, Reexport, IntervalSets, DomainSets, Statistics, SpecialFunctions
 
 @reexport using ApproxFunBase
 @reexport using ApproxFunOrthogonalPolynomials
