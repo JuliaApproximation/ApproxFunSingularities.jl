@@ -1,5 +1,5 @@
 module ApproxFunSingularities
-using LinearAlgebra, Reexport, IntervalSets, DomainSets, Statistics, SpecialFunctions
+using LinearAlgebra, Reexport, IntervalSets, DomainSets, SpecialFunctions
 
 @reexport using ApproxFunBase
 @reexport using ApproxFunOrthogonalPolynomials
@@ -27,7 +27,7 @@ import ApproxFunBase: Fun, SumSpace, SubSpace, WeightSpace, NoSpace,
             dotu, components, promoterangespace, ∞, gamma,
             assert_integer, SpecialEvalPtType, isleftendpoint, isrightendpoint, evaluation_point,
             @calculus_operator, ConcreteConversion, InterlaceOperator_Diagonal, UnsetSpace,
-            choosedomainspace
+            choosedomainspace, mean
 
 import ApproxFunOrthogonalPolynomials: order
 
