@@ -38,8 +38,6 @@ import Base: convert, getindex, *, /, ^,
             show, sum, cumsum, complex, sqrt, abs, in, first, last,
             union, isapprox, zeros, one, length, ones, exp, log
 
-using StaticArrays: SVector
-
 using HalfIntegers
 using OddEvenIntegers
 
@@ -328,6 +326,10 @@ function integrate(f::Fun{<:LaguerreWeight{<:Laguerre}})
             end
         end
     end
+end
+
+if !isdefined(Base, :get_extension)
+    include("../ext/ApproxFunSingularitiesStaticArraysExt.jl")
 end
 
 end
