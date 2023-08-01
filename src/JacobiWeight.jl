@@ -110,10 +110,6 @@ function coefficients(f::AbstractVector,
         sp::JacobiWeight{<:Any,DD},S2::SumSpace{<:Any,DD,<:Real}) where {DD<:IntervalOrSegment}
     sumspacecoefficients(f,sp,S2)
 end
-function coefficients(f::AbstractVector,
-        sp::JacobiWeight{<:Any,<:Segment{<:SVector{2}}}, S2::TensorSpace{<:Any,<:Any,<:EuclideanDomain{2}})
-    coefficients(f,sp,JacobiWeight(0,0,S2))
-end
 
 coefficients(f::AbstractVector,sp::JacobiWeight{<:Any,DD},S2::Space{DD,<:Real}) where {DD<:IntervalOrSegment} =
     coefficients(f,sp,JacobiWeight(0,0,S2))
