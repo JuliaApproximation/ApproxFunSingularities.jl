@@ -1,6 +1,6 @@
 name = "ApproxFunSingularities"
 uuid = "f8fcb915-6b99-5be2-b79a-d6dbef8e6e7e"
-version = "0.3.13"
+version = "0.3.14"
 
 [deps]
 ApproxFunBase = "fbd15aa5-315a-5a7d-a8a4-24992e37be05"
@@ -21,7 +21,7 @@ StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 ApproxFunSingularitiesStaticArraysExt = "StaticArrays"
 
 [compat]
-ApproxFunBase = "0.8.36"
+ApproxFunBase = "0.8.36, 0.9"
 ApproxFunBaseTest = "0.1"
 ApproxFunOrthogonalPolynomials = "0.2.3, 0.3, 0.4, 0.5, 0.6"
 Aqua = "0.6"
