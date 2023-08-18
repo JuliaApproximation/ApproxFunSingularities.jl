@@ -29,7 +29,7 @@ import ApproxFunBase: Fun, SumSpace, SubSpace, WeightSpace, NoSpace,
             tocanonicalD, canonicaldomain, setcanonicaldomain,
             coefficients, isconvertible, SpaceOperator, cfstype, mobius, roots,
             splitatroots, domaintype, rangetype, weight, isapproxinteger,
-            dotu, components, promoterangespace, ∞, gamma,
+            dotu, components, promoterangespace, ∞,
             assert_integer, SpecialEvalPtType, isleftendpoint, isrightendpoint, evaluation_point,
             @calculus_operator, ConcreteConversion, InterlaceOperator_Diagonal, UnsetSpace,
             choosedomainspace, mean
