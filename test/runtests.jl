@@ -407,8 +407,9 @@ end
 
     @testset "Union of ChebyshevDirichlet" begin
         dom = UnionDomain(0..1, 2..3)
-        @test components(union(JacobiWeight.(-0.5,-0.5,ChebyshevDirichlet{1,1}.(components(dom)))...)) ==
-            (JacobiWeight.(-0.5,-0.5,ChebyshevDirichlet{1,1}.(components(dom)))...,)
+        sps = components(union(JacobiWeight.(-0.5,-0.5,ChebyshevDirichlet{1,1}.(components(dom)))...))
+        spsexpected = (JacobiWeight.(-0.5,-0.5,ChebyshevDirichlet{1,1}.(components(dom)))...,)
+        @test all(((x,y),) -> x == y, zip(sps, spsexpected))
     end
 
     @testset "Ultraspherical special functions" begin
