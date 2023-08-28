@@ -1,7 +1,6 @@
 module ApproxFunSingularities
 
 using DomainSets
-using IntervalSets
 using LinearAlgebra
 using Reexport
 using SpecialFunctions
@@ -20,7 +19,7 @@ import ApproxFunBase: Fun, SumSpace, SubSpace, WeightSpace, NoSpace,
             DefiniteLineIntegral, DefiniteIntegral, ConcreteDefiniteIntegral,
             ConcreteDefiniteLineIntegral, maxspace, hasconversion,
             Space, spacescompatible, canonicalspace, domain, setdomain,
-            domainscompatible, domainspace, rangespace, boundary,
+            domainscompatible, domainspace, rangespace,
             union_rule, conversion_rule, maxspace_rule, conversion_type,
             linesum, differentiate, integrate, linebilinearform, bilinearform,
             subspace_coefficients, sumspacecoefficients,
@@ -36,8 +35,9 @@ import ApproxFunBase: Fun, SumSpace, SubSpace, WeightSpace, NoSpace,
 
 import ApproxFunOrthogonalPolynomials: order
 
-import DomainSets: Domain, Interval, ChebyshevInterval, boundary,
-            rightendpoint, leftendpoint, dimension
+import IntervalSets: rightendpoint, leftendpoint, Domain
+
+import DomainSets: ChebyshevInterval, boundary, dimension
 
 import Base: convert, getindex, *, /, ^,
             show, sum, cumsum, complex, sqrt, abs, in, first, last,
