@@ -99,12 +99,11 @@ end
 function show(io::IO,s::LogWeight)
     d=domain(s)
     #TODO: Get shift and weights right
+    sym = domain(s) == canonicaldomain(s) ? "x" : "𝑪($(domain(s)), x)"
     if s.α==s.β
-        print(io,"log((1-x^2)^", s.α, ")[")
+        print(io,"log((1-$sym^2)^", s.α, ")")
     else
-        print(io,"log((1+x)^", s.β, "(1-x)^", s.α, ")[")
+        print(io,"log((1+$sym)^", s.β, " * (1-$sym)^", s.α, ")")
     end
-
-    show(io,s.space)
-    print(io,"]")
+    print(io, " * ", s.space)
 end
