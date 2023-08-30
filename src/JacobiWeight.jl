@@ -509,16 +509,16 @@ end
 function show(io::IO,s::JacobiWeight)
     d=domain(s)
     #TODO: Get shift and weights right
+    sym = domain(s) == canonicaldomain(s) ? "x" : "𝑪($(domain(s)), x)"
     if s.α==s.β
-        print(io,"(1-x^2)^", s.α, "[")
+        print(io,"(1-$sym^2)^", s.α)
     elseif s.β==0
-        print(io,"(1-x)^", s.α, "[")
+        print(io,"(1-$sym)^", s.α)
     elseif s.α==0
-        print(io,"(1+x)^", s.β, "[")
+        print(io,"(1+$sym)^", s.β)
     else
-        print(io,"(1+x)^", s.β, "(1-x)^", s.α, "[")
+        print(io,"(1+$sym)^", s.β, " * (1-$sym)^", s.α)
     end
-
-    show(io,s.space)
-    print(io,"]")
+    print(io, " * ")
+    show(io, s.space)
 end
