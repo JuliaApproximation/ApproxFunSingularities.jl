@@ -134,7 +134,14 @@ end
 
     @testset "differentiate" begin
         f = Fun(x -> √(1-x^2) * x^2, JacobiWeight(0.5, 0.5, Chebyshev()))
-        g = @inferred ApproxFunSingularities.differentiate(f)
+        df(f) = 
+ApproxFunSingularities.differentiate(f)
+        g = if VERSION >= v"1.9"
+                @inferred df(f)
+            else
+                df(f)
+            end
+
         @test g ≈ Fun(x -> -x^3/√(1-x^2) + √(1-x^2) * 2x, JacobiWeight(-0.5, -0.5, Chebyshev()))
     end
 
