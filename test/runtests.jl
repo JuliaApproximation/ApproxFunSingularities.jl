@@ -132,6 +132,19 @@ end
         @test (D*f)(x) ≈ exp(x)*(x-1)/(2x^2)
     end
 
+    @testset "differentiate" begin
+        f = Fun(x -> √(1-x^2) * x^2, JacobiWeight(0.5, 0.5, Chebyshev()))
+        df(f) = 
+ApproxFunSingularities.differentiate(f)
+        g = if VERSION >= v"1.9"
+                @inferred df(f)
+            else
+                df(f)
+            end
+
+        @test g ≈ Fun(x -> -x^3/√(1-x^2) + √(1-x^2) * 2x, JacobiWeight(-0.5, -0.5, Chebyshev()))
+    end
+
     @testset "Jacobi singularity" begin
         x = Fun(identity)
         f = exp(x)/(1-x.^2)
