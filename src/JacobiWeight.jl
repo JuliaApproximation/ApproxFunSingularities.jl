@@ -423,12 +423,12 @@ function Multiplication(f::Fun{<:JacobiWeight{<:ConstantSpace,<:IntervalOrSegmen
         # decrement β and multiply again
         M1 = ConcreteMultiplication(f.coefficients[1]*jacobiweight(1,0,d),S)
         M1_out = Multiplication(jacobiweight(Sf.β-1,Sf.α,d), rangespace(M1)) * M1
-        MultiplicationWrapper(f, M1_out)
+        MultiplicationWrapper(f, M1_out, S)
     elseif isapproxinteger(Sf.α) && Sf.α ≥ 1 && S.a >0
         # decrement α and multiply again
         M2 = ConcreteMultiplication(f.coefficients[1]*jacobiweight(0,1,d),S)
         M2_out = Multiplication(jacobiweight(Sf.β,Sf.α-1,d), rangespace(M2)) * M2
-        MultiplicationWrapper(f, M2_out)
+        MultiplicationWrapper(f, M2_out, S)
     else
         # default JacobiWeight
         M = Multiplication(Fun(Sf.space, f.coefficients), S)
