@@ -409,6 +409,16 @@ for (Func,Len,Sum) in ((:DefiniteIntegral,:complexlength,:sum),(:DefiniteLineInt
     end
 end
 
+function _default_mul(f::Fun{<:JacobiWeight{<:ConstantSpace,<:IntervalOrSegmentDomain}}, S::Jacobi)
+    # default JacobiWeight
+    Sf = space(f)
+    M = Multiplication(Fun(Sf.space, coefficients(f)), S)
+    rsp = JacobiWeight(Sf.β, Sf.α, rangespace(M))
+    MultiplicationWrapper(f, SpaceOperator(M,S,rsp))
+end
+
+jw10(d) = jacobiweight(1,0,d)
+jw01(d) = jacobiweight(0,1,d)
 
 ## <: IntervalOrSegment avoids a julia bug
 function Multiplication(f::Fun{<:JacobiWeight{<:ConstantSpace,<:IntervalOrSegmentDomain}}, S::Jacobi)
@@ -419,6 +429,52 @@ function Multiplication(f::Fun{<:JacobiWeight{<:ConstantSpace,<:IntervalOrSegmen
     if ((Sf.β==1 && Sf.α==0 && S.b >0) ||
                         (Sf.β==0 && Sf.α==1 && S.a >0))
         ConcreteMultiplication(f,S)
+    elseif isinteger(Sf.β) && isinteger(Sf.α) && isinteger(S.b) && isinteger(S.a)
+        if !((Sf.β ≥ 1 && S.b > 0) || (Sf.α ≥ 1 && S.a > 0))
+            return _default_mul(f, S)
+        end
+        fJ_ = if Sf.β ≥ 1 && S.b > 0
+                jacobiweight(1,0,d)
+            else # Sf.α ≥ 1 && S.a > 0
+                jacobiweight(0,1,d)
+            end
+        fJ = Fun(space(fJ_), coefficients(fJ_) * coefficient(f,1))
+        Ms = ConcreteMultiplication(fJ, S)
+        rs = rangespace(Ms)
+        rsb, rsa = rs.space.b, rs.space.a
+        Sfrs = JacobiWeight(Sf.β - (S.b - rsb), Sf.α - (S.a - rsa), Sf.space)
+        stoppingSf = Sf.β <= S.b && Sf.α <= S.a # stop at (Sf.β, Sf.α) = (0,1) or (1,0)
+        if stoppingSf
+            # if vb is non-empty, the domainspace of the last term should be rs
+            nb = length((1+iszero(Sfrs.α)):Sfrs.β)
+            b_range = rsb-nb+1:rsb
+            vb1 = [ConcreteMultiplication(jw10(d), Jacobi(b,rsa,d)) for b in b_range]
+            rsvb1 = isempty(vb1) ? rs : rangespace(first(vb1))
+            Sfrsb = JacobiWeight(Sf.β - (S.b - rsvb1.space.b), Sf.α - (S.a - rsvb1.space.a), Sf.space)
+            # if vb is non-empty, the domainspace of the last term should be rsvb1
+            na = length((1+iszero(Sfrsb.β)):Sfrsb.α)
+            a_range = rsa-na+1:rsa
+            va1 = [ConcreteMultiplication(jw01(d), Jacobi(rsvb1.space.b,a,d)) for a in a_range]
+            rsva = isempty(va1) ? rsvb1 : rangespace(first(va1))
+            βgtα = Sf.β - (S.b - rsva.space.b) > Sf.α - (S.a - rsva.space.a)
+            ML = ConcreteMultiplication(jacobiweight(Int(βgtα),Int(!βgtα),d), rsva.space)
+            v = [va1; vb1; [Ms]]
+        else
+            b_range = 1:(rsb * (Sf.β > 0))
+            vb2 = [ConcreteMultiplication(jw10(d), Jacobi(b,rsa,d)) for b in b_range]
+            rsvb2 = isempty(vb2) ? rs : rangespace(first(vb2))
+            a_range = 1:(rsa * (Sf.α > 0))
+            va2 = [ConcreteMultiplication(jw01(d), Jacobi(rsvb2.space.b,a,d)) for a in a_range]
+            rsva2 = isempty(va2) ? rsvb2 : rangespace(first(va2))
+            ML = _default_mul(jacobiweight(Sf.β-(S.b-rsva2.space.b), Sf.α-(S.a-rsva2.space.a), d), rsva2.space)
+            v = [va2; vb2; [Ms]]
+        end
+        bw = bandwidthssum(bandwidths, v) .+ bandwidths(ML)
+        bbw = bandwidthssum(blockbandwidths, v) .+ blockbandwidths(ML)
+        sbbw = bandwidthssum(subblockbandwidths, v) .+ subblockbandwidths(ML)
+        ts = (size(ML, 1), size(Ms, 2))
+        T = TimesOperator(Operator{eltype(ML)}[ML; v], bw, ts, bbw, sbbw)
+        MultiplicationWrapper(f, SpaceOperator(T, S, rangespace(ML)), S)
     elseif isapproxinteger(Sf.β) && Sf.β ≥ 1 && S.b >0
         # decrement β and multiply again
         M1 = ConcreteMultiplication(f.coefficients[1]*jacobiweight(1,0,d),S)
@@ -440,10 +496,7 @@ function Multiplication(f::Fun{<:JacobiWeight{<:ConstantSpace,<:IntervalOrSegmen
         M2_out = TimesOperator(Operator{eltype(M2)}[M2_, M2], bw, ts, bbw, sbbw)
         MultiplicationWrapper(f, M2_out, S)
     else
-        # default JacobiWeight
-        M = Multiplication(Fun(Sf.space, f.coefficients), S)
-        rsp = JacobiWeight(Sf.β, Sf.α, rangespace(M))
-        MultiplicationWrapper(f, SpaceOperator(M,S,rsp))
+        _default_mul(f, S)
     end
 end
 
@@ -477,9 +530,10 @@ function getindex(M::ConcreteMultiplication{
                 k::Integer, j::Integer)
     @assert ncoefficients(M.f)==1
     a,b=domainspace(M).a,domainspace(M).b
-    c=M.f.coefficients[1]
-    if space(M.f).β==1
-        @assert space(M.f).α==0
+    c = coefficient(M.f, 1)
+    Sf = space(M.f)
+    if Sf.β==1
+        @assert Sf.α==0
         # multiply by (1+x)
         if j==k
             c*2(k+b-1)/(2k+a+b-1)
@@ -488,8 +542,8 @@ function getindex(M::ConcreteMultiplication{
         else
             zero(eltype(M))
         end
-    elseif space(M.f).α == 1
-        @assert space(M.f).β==0
+    elseif Sf.α == 1
+        @assert Sf.β==0
         # multiply by (1-x)
         if j==k
             c*2(k+a-1)/(2k+a+b-1)
