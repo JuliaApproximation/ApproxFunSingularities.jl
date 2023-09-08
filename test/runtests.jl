@@ -136,6 +136,14 @@ end
         S = Jacobi(2,1)
         @test rsp(f, S) == JacobiWeight(2,2,Legendre())
 
+        f = genf(half(Odd(3)), half(Odd(3)))
+        S = Jacobi(2,0)
+        @test @inferred(((f,S) -> domainspace(Multiplication(f, S)))(f,S)) == S
+        @test Multiplication(f, S) * Fun(S) ≈ Fun(x->x*(1-x^2)^(3/2), JacobiWeight(3/2, 3/2, S))
+
+        S = Jacobi(half(Odd(1)), half(Odd(3)))
+        @test @inferred(domainspace(@inferred(Multiplication(f,S)))) == S
+
         @testset for β in 0:5, α in 0:5
             f = genf(β, α)
             g = Fun(x->(1+x)^2 * (1+x)^β * (1-x)^α)
