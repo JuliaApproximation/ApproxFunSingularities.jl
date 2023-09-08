@@ -31,13 +31,15 @@ import ApproxFunBase: Fun, SumSpace, SubSpace, WeightSpace, NoSpace,
             dotu, components, promoterangespace, ∞,
             assert_integer, SpecialEvalPtType, isleftendpoint, isrightendpoint, evaluation_point,
             @calculus_operator, ConcreteConversion, InterlaceOperator_Diagonal, UnsetSpace,
-            choosedomainspace, mean
+            choosedomainspace, mean, bandwidthssum
 
 import ApproxFunOrthogonalPolynomials: order
 
 import IntervalSets: rightendpoint, leftendpoint, Domain
 
 import DomainSets: ChebyshevInterval, boundary, dimension
+
+using BlockBandedMatrices: blockbandwidths, subblockbandwidths
 
 import Base: convert, getindex, *, /, ^,
             show, sum, cumsum, complex, sqrt, abs, in, first, last,

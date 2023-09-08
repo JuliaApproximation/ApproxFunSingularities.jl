@@ -3,7 +3,8 @@ module AFSTests
 using ApproxFunBase
 using ApproxFunBase: HeavisideSpace, PointSpace, ArraySpace, DiracSpace, PiecewiseSegment,
                         UnionDomain, resizedata!, CachedOperator, RaggedMatrix,
-                        Block, ∞, BandedBlockBandedMatrix, NoSpace
+                        Block, ∞, BandedBlockBandedMatrix, NoSpace, ConcreteMultiplication,
+                        MultiplicationWrapper
 using ApproxFunBaseTest: testbandedoperator, testtransforms, testfunctional,
                         testbandedblockbandedoperator
 using ApproxFunOrthogonalPolynomials
@@ -109,9 +110,49 @@ end
         xg = Fun(x->x*√(1-x^2), JacobiWeight(0.5, 0.5, Jacobi(1,1)))
         @test Multiplication(g) * Fun(NormalizedLegendre()) ≈ xg
 
-        f = Fun(x -> (1-x)^2, JacobiWeight(3,4,ConstantSpace(ChebyshevInterval())));
-        S = @inferred (f -> domainspace(Multiplication(f, Jacobi(1,1))))(f)
-        @test S == Jacobi(1,1)
+        genf(β,α) = Fun(x -> (1+x)^β * (1-x)^α, JacobiWeight(β,α,ConstantSpace(ChebyshevInterval())));
+
+        f = genf(0,2)
+        S = Jacobi(5,5)
+        d = domain(S)
+        # Multiplication(f, S) is inferred as a small Union
+        # We enumerate the possible types
+        T1 = typeof(Multiplication(genf(1,0), S)::ConcreteMultiplication)
+        T2 = typeof(Multiplication(f, S)::MultiplicationWrapper)
+        T3 = typeof(Multiplication(genf(1,0), Legendre())::MultiplicationWrapper)
+        @inferred Union{T1,T2,T3} Multiplication(f, S)
+
+        dsp(f, S) = domainspace(Multiplication(f, S))
+        rsp(f, S) = rangespace(Multiplication(f, S))
+        ds = if VERSION >= v"1.9"
+            @inferred dsp(f, S)
+        else
+            dsp(f, S)
+        end
+        @test ds == S
+        @test rsp(f, S) == Jacobi(5,3)
+
+        f = genf(4,3)
+        S = Jacobi(2,1)
+        @test rsp(f, S) == JacobiWeight(2,2,Legendre())
+
+        @testset for β in 0:5, α in 0:5
+            f = genf(β, α)
+            g = Fun(x->(1+x)^2 * (1+x)^β * (1-x)^α)
+            @testset for b in 0:8, a in 0:8
+                S = Jacobi(b,a)
+                w = Fun(x->(1+x)^2, S)
+                M = Multiplication(f, S)
+                @test domainspace(M) == S
+                if b >= β && a >= α
+                    @test rangespace(M) == Jacobi(b-β, a-α)
+                end
+                if b < β && a < α
+                    @test rangespace(M) == JacobiWeight(β-b, α-a, Legendre())
+                end
+                @test Multiplication(f) * w ≈ M * w ≈ g
+            end
+        end
     end
 
     @testset "Derivative" begin
