@@ -422,12 +422,22 @@ function Multiplication(f::Fun{<:JacobiWeight{<:ConstantSpace,<:IntervalOrSegmen
     elseif isapproxinteger(Sf.β) && Sf.β ≥ 1 && S.b >0
         # decrement β and multiply again
         M1 = ConcreteMultiplication(f.coefficients[1]*jacobiweight(1,0,d),S)
-        M1_out = Multiplication(jacobiweight(Sf.β-1,Sf.α,d), rangespace(M1)) * M1
+        M1_ = Multiplication(jacobiweight(Sf.β-1,Sf.α,d), rangespace(M1).space)
+        bw = bandwidths(M1) .+ bandwidths(M1_)
+        bbw = blockbandwidths(M1) .+ blockbandwidths(M1_)
+        sbbw = subblockbandwidths(M1) .+ subblockbandwidths(M1_)
+        ts = (size(M1, 1), size(M1_, 2))
+        M1_out = TimesOperator(Operator{eltype(M1)}[M1_, M1], bw, ts, bbw, sbbw)
         MultiplicationWrapper(f, M1_out, S)
     elseif isapproxinteger(Sf.α) && Sf.α ≥ 1 && S.a >0
         # decrement α and multiply again
         M2 = ConcreteMultiplication(f.coefficients[1]*jacobiweight(0,1,d),S)
-        M2_out = Multiplication(jacobiweight(Sf.β,Sf.α-1,d), rangespace(M2)) * M2
+        M2_ = Multiplication(jacobiweight(Sf.β,Sf.α-1,d), rangespace(M2).space)
+        bw = bandwidths(M2) .+ bandwidths(M2_)
+        bbw = blockbandwidths(M2) .+ blockbandwidths(M2_)
+        sbbw = subblockbandwidths(M2) .+ subblockbandwidths(M2_)
+        ts = (size(M2, 1), size(M2_, 2))
+        M2_out = TimesOperator(Operator{eltype(M2)}[M2_, M2], bw, ts, bbw, sbbw)
         MultiplicationWrapper(f, M2_out, S)
     else
         # default JacobiWeight
@@ -444,15 +454,18 @@ Multiplication(f::Fun{<:JacobiWeight{<:ConstantSpace,<:IntervalOrSegmentDomain}}
 function rangespace(M::ConcreteMultiplication{<:
                         JacobiWeight{<:ConstantSpace,<:IntervalOrSegmentDomain},<:Jacobi})
     S=domainspace(M)
-    if space(M.f).β==1
+    Sf = space(M.f)
+    zeroT = zero(Sf.β)
+    J = if Sf.β == 1
         # multiply by (1+x)
         Jacobi(S.b-1,S.a,domain(S))
-    elseif space(M.f).α == 1
+    elseif Sf.α == 1
         # multiply by (1-x)
         Jacobi(S.b,S.a-1,domain(S))
     else
         error("Not implemented")
     end
+    JacobiWeight(zeroT, zeroT, J)
 end
 
 bandwidths(::ConcreteMultiplication{<:
