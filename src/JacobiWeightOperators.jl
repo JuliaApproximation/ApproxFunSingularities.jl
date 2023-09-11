@@ -163,27 +163,29 @@ function jacobiweightDerivative(S::JacobiWeight{<:Any,<:ChebyshevInterval})
     oneT = oneunit(zeroT)
     DSsp = Derivative(S.space)
 
-    if S.β == S.α == 0
+    Sβ, Sα = S.β, S.α
+
+    if Sβ == Sα == 0
         DerivativeWrapper(SpaceOperator(DSsp,S,
                 JacobiWeight(zeroT,zeroT,rangespace(DSsp))),1)
-    elseif S.β == 0
+    elseif Sβ == 0
         w = Fun(JacobiWeight(zeroT,oneT,ConstantSpace(d)),[1.0])
 
-        DDβ0 = -S.α + w*DSsp
-        rsβ0 = JacobiWeight(zeroT,S.α-1,rangespace(DDβ0))
+        DDβ0 = ConstantOperator(-Sα) + w*DSsp
+        rsβ0 = JacobiWeight(zeroT,Sα-1,rangespace(DDβ0))
         DerivativeWrapper(SpaceOperator(DDβ0,S,rsβ0),1)
-    elseif S.α == 0
+    elseif Sα == 0
         w = Fun(JacobiWeight(oneT,zeroT,ConstantSpace(d)),[1.0])
 
-        DDα0 = S.β + w*DSsp
-        rsα0 = JacobiWeight(S.β-1,zeroT,rangespace(DDα0))
+        DDα0 = ConstantOperator(Sβ) + w*DSsp
+        rsα0 = JacobiWeight(Sβ-1,zeroT,rangespace(DDα0))
         DerivativeWrapper(SpaceOperator(DDα0,S,rsα0),1)
     else
         w = Fun(JacobiWeight(oneT,oneT,ConstantSpace(d)),[1.0])
         x=Fun()
 
-        DD = S.β*(1-x) - S.α*(1+x) + w*DSsp
-        rs = JacobiWeight(S.β-1,S.α-1,rangespace(DD))
+        DD = Sβ*(1-x) - Sα*(1+x) + w*DSsp
+        rs = JacobiWeight(Sβ-1,Sα-1,rangespace(DD))
         DerivativeWrapper(SpaceOperator(DD,S,rs),1)
     end
 end
