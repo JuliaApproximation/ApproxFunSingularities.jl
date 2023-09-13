@@ -130,11 +130,22 @@ end
             dsp(f, S)
         end
         @test ds == S
-        @test rsp(f, S) == Jacobi(5,3)
+
+        rs = if VERSION >= v"1.9"
+            @inferred rsp(f, S)
+        else
+            rsp(f, S)
+        end
+        @test rs == Jacobi(5,3)
 
         f = genf(4,3)
         S = Jacobi(2,1)
-        @test rsp(f, S) == JacobiWeight(2,2,Legendre())
+        rs = if VERSION >= v"1.9"
+            @inferred rsp(f, S)
+        else
+            rsp(f, S)
+        end
+        @test rs == JacobiWeight(2,2,Legendre())
 
         f = genf(half(Odd(3)), half(Odd(3)))
         S = Jacobi(2,0)
@@ -153,15 +164,20 @@ end
                 M = Multiplication(f, S)
                 @test domainspace(M) == S
                 if isinteger(β) && isinteger(α) && b >= β && a >= α
-                    @test rangespace(M) == Jacobi(b-β, a-α)
+                    @test @inferred(rangespace(M)) == Jacobi(b-β, a-α)
                 elseif isinteger(β) && isinteger(α) && b < β && a < α
-                    @test rangespace(M) == JacobiWeight(β-b, α-a, Legendre())
+                    @test @inferred(rangespace(M)) == JacobiWeight(β-b, α-a, Legendre())
                 elseif !isinteger(β) && (!isinteger(α) || α == 0)
                     @test rangespace(M) == JacobiWeight(β, α, S)
                 elseif !isinteger(α) && (!isinteger(β) || β == 0)
                     @test rangespace(M) == JacobiWeight(β, α, S)
                 end
-                @test Multiplication(f) * w ≈ M * w ≈ g
+                Mw = if isinteger(β) && isinteger(α)
+                    @inferred(M * w)
+                else
+                    M * w
+                end
+                @test Multiplication(f) * w ≈ Mw ≈ g
             end
         end
     end
