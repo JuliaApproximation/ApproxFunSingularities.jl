@@ -7,7 +7,7 @@ end
 
 function ExpWeight(q,sp)
     @assert domain(q) == domain(sp)
-    ExpWeight{typeof(sp),typeof(q),domaintype(q),rangetype(q)}(q,sp)
+    ExpWeight{typeof(sp),typeof(q),domaintype(space(q)),rangetype(space(q))}(q,sp)
 end
 
 weight(sp::ExpWeight,x) = exp(sp.exponent(x))
