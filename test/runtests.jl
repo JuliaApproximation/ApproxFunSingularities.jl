@@ -144,19 +144,22 @@ end
         S = Jacobi(half(Odd(1)), half(Odd(3)))
         @test @inferred(domainspace(@inferred Multiplication(f,S))) == S
 
-        @testset for β in 0:5, α in 0:5
+        @testset for β in 0:0.5:5, α in 0:0.5:5
             f = genf(β, α)
-            g = Fun(x->(1+x)^2 * (1+x)^β * (1-x)^α)
+            g = Fun(x->(1+x)^2 * (1+x)^β * (1-x)^α, JacobiWeight(β+2, α, Chebyshev()))
             @testset for b in 0:8, a in 0:8
                 S = Jacobi(b,a)
                 w = Fun(x->(1+x)^2, S)
                 M = Multiplication(f, S)
                 @test domainspace(M) == S
-                if b >= β && a >= α
+                if isinteger(β) && isinteger(α) && b >= β && a >= α
                     @test rangespace(M) == Jacobi(b-β, a-α)
-                end
-                if b < β && a < α
+                elseif isinteger(β) && isinteger(α) && b < β && a < α
                     @test rangespace(M) == JacobiWeight(β-b, α-a, Legendre())
+                elseif !isinteger(β) && (!isinteger(α) || α == 0)
+                    @test rangespace(M) == JacobiWeight(β, α, S)
+                elseif !isinteger(α) && (!isinteger(β) || β == 0)
+                    @test rangespace(M) == JacobiWeight(β, α, S)
                 end
                 @test Multiplication(f) * w ≈ M * w ≈ g
             end
