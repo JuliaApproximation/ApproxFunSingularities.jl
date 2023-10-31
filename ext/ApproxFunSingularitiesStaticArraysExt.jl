@@ -1,6 +1,8 @@
 module ApproxFunSingularitiesStaticArraysExt
 
 using ApproxFunSingularities
+# Specifying the full namespace is necessary because of https://github.com/JuliaLang/julia/issues/48533
+# See https://github.com/JuliaStats/LogExpFunctions.jl/pull/63
 using ApproxFunSingularities.ApproxFunBase
 import ApproxFunSingularities.ApproxFunBase: coefficients
 using ApproxFunSingularities.DomainSets
