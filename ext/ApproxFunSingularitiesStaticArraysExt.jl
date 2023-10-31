@@ -1,9 +1,9 @@
 module ApproxFunSingularitiesStaticArraysExt
 
 using ApproxFunSingularities
-using ApproxFunBase
-import ApproxFunBase: coefficients
-using DomainSets
+using ApproxFunSingularities.ApproxFunBase
+import ApproxFunSingularities.ApproxFunBase: coefficients
+using ApproxFunSingularities.DomainSets
 using StaticArrays
 
 function coefficients(f::AbstractVector,
