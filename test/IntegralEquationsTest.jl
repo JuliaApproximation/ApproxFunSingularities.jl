@@ -6,7 +6,7 @@ using ApproxFunBase
 using IntervalSets
 using LinearAlgebra
 using Test
-using ApproxFunBaseTest: testfunctional, testbandedbelowoperator, testbandedoperator
+using ApproxFunBase.TestUtils: testfunctional, testbandedbelowoperator, testbandedoperator
 
 
 @testset "Integral equations" begin

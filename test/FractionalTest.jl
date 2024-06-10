@@ -1,6 +1,6 @@
 module FractionalTest
 
-using ApproxFunBaseTest: testfunctional, testbandedoperator
+using ApproxFunBase.TestUtils: testfunctional, testbandedoperator
 using ApproxFunSingularities
 using ApproxFunSingularities: LeftIntegral,LeftDerivative, RightDerivative, RightIntegral
 using LinearAlgebra

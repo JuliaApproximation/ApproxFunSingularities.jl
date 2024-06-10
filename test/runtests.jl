@@ -5,7 +5,7 @@ using ApproxFunBase: HeavisideSpace, PointSpace, ArraySpace, DiracSpace, Piecewi
                         UnionDomain, resizedata!, CachedOperator, RaggedMatrix,
                         Block, ∞, BandedBlockBandedMatrix, NoSpace, ConcreteMultiplication,
                         MultiplicationWrapper
-using ApproxFunBaseTest: testbandedoperator, testtransforms, testfunctional,
+using ApproxFunBase.TestUtils: testbandedoperator, testtransforms, testfunctional,
                         testbandedblockbandedoperator
 using ApproxFunOrthogonalPolynomials
 using ApproxFunOrthogonalPolynomials: order
