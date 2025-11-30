@@ -29,7 +29,7 @@ testsuite = find_tests(pwd())
 args = parse_args(ARGS)
 
 if filter_tests!(testsuite, args)
-    delete!(testsuite, "testutils.jl")
+    delete!(testsuite, "testutils")
 end
 
 runtests(ApproxFunSingularities, ARGS; init_code, testsuite)
