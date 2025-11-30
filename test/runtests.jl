@@ -22,6 +22,10 @@ const init_code = quote
     using Test
 end
 
+# Start with autodiscovered tests
+testsuite = find_tests(pwd())
+
+# Parse arguments
 args = parse_args(ARGS)
 
 if filter_tests!(testsuite, args)
