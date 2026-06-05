@@ -1,6 +1,6 @@
 name = "ApproxFunSingularities"
 uuid = "f8fcb915-6b99-5be2-b79a-d6dbef8e6e7e"
-version = "0.3.22"
+version = "0.3.23"
 
 [deps]
 ApproxFunBase = "fbd15aa5-315a-5a7d-a8a4-24992e37be05"
@@ -36,7 +36,7 @@ Reexport = "0.2, 1"
 SpecialFunctions = "1, 2"
 StaticArrays = "1"
 Test = "1"
-julia = "1.6"
+julia = "1.10"
 
 [extras]
 Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
